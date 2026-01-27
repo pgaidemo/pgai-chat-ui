@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatWindow = document.getElementById("chat-window");
   const chatForm   = document.getElementById("chat-form");
   const userInput  = document.getElementById("user-input");
+  const clearChatBtn = document.getElementById("clear-chat");
 
   const agentTitle = document.getElementById("agent-name");
   const agentSub   = document.getElementById("agent-subtitle");
@@ -194,6 +195,12 @@ Please advise.`
     await sendMessage();
   });
 
+  clearChatBtn?.addEventListener("click", (e) => {
+  e.stopPropagation(); // prevent accidental bubbling
+  clearChat();
+});
+
+
   async function sendMessage() {
     const text = userInput.value.trim();
     if (!text) return;
@@ -283,6 +290,25 @@ Please advise.`
       }
     }
   }
+  
+   function clearChat() {
+  // Clear chat messages only
+  chatWindow.innerHTML = "";
+
+  // Reset inspector (optional but recommended)
+  document.getElementById("ins-decision").textContent = "—";
+  document.getElementById("ins-stage").textContent = "—";
+  document.getElementById("ins-owasp").textContent = "—";
+  document.getElementById("ins-action").textContent = "—";
+  document.getElementById("ins-reason").textContent =
+    "PointGuardAI inspection panel ready.";
+  document.getElementById("ins-rewrite").textContent = "—";
+
+  // Seed fresh welcome message
+  seedWelcome();
+}
+
+
 
   /* ----------------------------
      Network
