@@ -150,6 +150,8 @@ addMessage({
       removeTyping(typingId);
       addPolicyCard("Error", "Failed to reach backend");
     }
+    updateInspector(data);
+
   }
 
   /* ----------------------------
@@ -257,3 +259,34 @@ addMessage({
   }
 
 });
+
+
+function updateInspector(data) {
+  document.getElementById("ins-agent").textContent = activeAgent;
+
+  // Decision
+  const decisionEl = document.getElementById("ins-decision");
+  decisionEl.textContent = data.decision || "allowed";
+  decisionEl.className = `status ${data.decision || "ok"}`;
+
+  // OWASP
+  document.getElementById("ins-owasp").textContent =
+    (data.ai && data.ai.length) ? data.ai.join(", ") : "—";
+
+  // Stage
+  document.getElementById("ins-stage").textContent = data.stage || "—";
+
+  // Action
+  document.getElementById("ins-action").textContent =
+    (data.dlp && data.dlp.length)
+      ? data.dlp.join(", ")
+      : (data.ai && data.ai.length ? data.ai.join(", ") : "—");
+
+  // Reason
+  document.getElementById("ins-reason").textContent =
+    data.reason || "Policy evaluated successfully.";
+
+  // Suggested Rewrite
+  document.getElementById("ins-rewrite").textContent =
+    data.rewritten || "—";
+}
