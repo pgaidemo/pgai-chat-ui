@@ -64,15 +64,15 @@ body{
 .brand{ display:flex; gap:12px; align-items:center; }
 /* Brand logo container – supports transparent horizontal logos */
 .logo {
-  height: 48px;                 /* controls visual size */
-  padding: 6px 10px;
+  height: 48px;
+  padding: 0;              /* 🔥 remove padding box */
   display: flex;
   align-items: center;
 
-  border-radius: 12px;
-  background: rgba(255,255,255,0.08);   /* subtle glass */
-  border: 1px solid rgba(255,255,255,0.18);
+  background: transparent; /* 🔥 no container */
+  border: none;
 }
+
 
 /* Transparent logo image */
 .logo img {
@@ -80,6 +80,7 @@ body{
   width: auto;                  /* 🔑 allows horizontal expansion */
   max-height: 48px;
   object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
 }
 /* Fallback initials (if logo fails) */
 .logo-fallback {
