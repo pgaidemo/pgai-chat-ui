@@ -62,27 +62,37 @@ body{
 }
 
 .brand{ display:flex; gap:12px; align-items:center; }
-/* Brand logo container */
-.logo{
-  width:56px;
-  height:56px;
-  border-radius:14px;
+/* Brand logo container (horizontal logo safe) */
+.logo {
+  height: 48px;              /* controls logo size */
+  padding: 6px 10px;         /* breathing room */
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+
   background: rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.18);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border: 1px solid rgba(255,255,255,.18);
 }
 
 /* Actual logo image */
-.logo img{
-  max-height:44px;     /* 🔥 visible logo size */
-  max-width:44px;
-  width:auto;
-  height:auto;
-  object-fit:contain;
-  padding:0;           /* 🔥 remove padding */
+.logo img {
+  height: 100%;
+  width: auto;               /* 🔥 KEY: no forced width */
+  max-height: 48px;
+  object-fit: contain;
 }
+
+/* Fallback initials (if logo fails) */
+.logo-fallback {
+  height: 100%;
+  min-width: 48px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 18px;
+}
+
 
 .brand-title{ color:rgba(255,255,255,.95); font-weight:800; line-height:1.1; }
 .brand-subtitle{ color:rgba(255,255,255,.70); font-size:12px; margin-top:2px; }
