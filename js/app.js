@@ -120,23 +120,31 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await callBackend(text, abortController.signal);
       removeTyping(typingId);
 
-      const status = (data.status || "allowed").toLowerCase();
+     const decision = (data.decision || "allowed").toLowerCase();
 
-      if (status === "blocked") {
-        addPolicyCard("Blocked", data.reason);
-        return;
-      }
+// Policy event card (always show if rewritten or blocked)
+if (decision === "blocked") {
+  addPolicyCard(
+    "Blocked by Policy",
+    data.policy || "Policy enforcement"
+  );
+}
 
-      if (status === "rewritten") {
-        addPolicyCard("Rewritten", data.rewritten_prompt);
-      }
+if (decision === "rewritten") {
+  addPolicyCard(
+    "Sensitive Data Sanitized",
+    (data.dlp || []).join(", ") || "Data was sanitized"
+  );
+}
 
-      addMessage({
-        role: "assistant",
-        title: AGENTS[activeAgent].label,
-        text: data.response || "Done.",
-        time: nowTime(),
-      });
+// Always show assistant message
+addMessage({
+  role: "assistant",
+  title: AGENTS[activeAgent].label,
+  text: data.message || "Done.",
+  time: nowTime(),
+});
+
 
     } catch (err) {
       removeTyping(typingId);
