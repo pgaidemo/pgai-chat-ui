@@ -220,6 +220,75 @@ button{
     #fff;
 }
 
+.msg-row{
+  display:flex;
+  margin-bottom:14px;
+}
+
+.msg-row.user{ justify-content:flex-end; }
+.msg-row.assistant{ justify-content:flex-start; }
+.msg-row.system{ justify-content:center; }
+
+.msg-bubble{
+  max-width:78%;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(2,6,23,.10);
+  box-shadow:0 6px 18px rgba(2,6,23,.06);
+  line-height:1.45;
+  font-size:14px;
+  background:#fff;
+}
+.msg-bubble.user{
+  background: linear-gradient(180deg, rgba(37,99,235,.96), rgba(29,78,216,.96));
+  color:#fff;
+  border-color:rgba(255,255,255,.18);
+}
+
+.msg-bubble.assistant{
+  background:#ffffff;
+}
+.msg-header{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:11px;
+  margin-bottom:6px;
+  opacity:.85;
+}
+.policy-card{
+  width:100%;
+  max-width:560px;
+  padding:12px 14px;
+  border-radius:14px;
+  background: rgba(220,38,38,.06);
+  border:1px solid rgba(220,38,38,.25);
+  color:#7f1d1d;
+  box-shadow:0 6px 18px rgba(220,38,38,.15);
+}
+
+.policy-title{
+  font-weight:900;
+  font-size:12px;
+  margin-bottom:4px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.policy-body{
+  font-size:13px;
+  line-height:1.4;
+}
+.msg-row.system{
+  justify-content:center;
+}
+.msg-row{
+  margin-bottom:14px; /* was effectively ~10px */
+}
+
+
+
+
 .msg{
   display:flex;
   gap:10px;
@@ -261,6 +330,12 @@ button{
   display:inline-flex;
   gap:6px;
   align-items:center;
+}
+.typing span{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#94a3b8;
 }
 .typing .dotty{
   width:6px; height:6px; border-radius:50%;
