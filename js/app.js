@@ -15,10 +15,11 @@ const userInput = document.getElementById("user-input");
 const agentTitle = document.getElementById("agent-title");
 const agentSub = document.getElementById("agent-subtitle");
 const agentBadge = document.getElementById("agent-badge");
+const sessionId = crypto.randomUUID();
 
 // 🔧 Set this to your Cloudflare Tunnel URL for PointGuardAI
 // Example: https://guard.demo.yourdomain.com/chat
-const POINTGUARDAI_ENDPOINT = "https://guard.demo.yourdomain.com/chat";
+const POINTGUARDAI_ENDPOINT = "https://n8n.tanguturi.org/webhook/chat";
 
 // Agent definitions (tabs)
 const AGENTS = {
@@ -212,14 +213,16 @@ async function callPointGuardAI(prompt, signal) {
     headers: { "Content-Type": "application/json" },
     signal,
     body: JSON.stringify({
-      agent: activeAgent,
-      prompt,
-      // Optional metadata for demo/audit correlation
-      meta: {
-        ui: "github-pages-chat",
-        ts: new Date().toISOString(),
-      },
-    }),
+    agent: activeAgent,
+    message: prompt,
+    conversation_id: sessionId,
+    source: "pgai-chat-ui",
+    meta: {
+     ui: "github-pages-chat",
+     ts: new Date().toISOString(),
+  },
+}),
+
   });
 
   // Handle non-JSON / error responses gracefully
