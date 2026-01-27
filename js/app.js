@@ -9,14 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
      DOM refs
   ---------------------------- */
   const chatWindow = document.getElementById("chat-window");
+  const chatForm   = document.getElementById("chat-form");
   const userInput  = document.getElementById("user-input");
-  const sendBtn    = document.getElementById("send-btn");
 
   const agentTitle = document.getElementById("agent-name");
   const agentSub   = document.getElementById("agent-subtitle");
   const agentBadge = document.getElementById("agent-badge");
 
-  if (!chatWindow || !userInput || !sendBtn) {
+  if (!chatWindow || !userInput || !chatForm) {
     console.error("❌ Critical chat DOM elements missing");
     return;
   }
@@ -90,18 +90,17 @@ document.addEventListener("DOMContentLoaded", () => {
     agentSub.textContent   = cfg.subtitle;
     agentBadge.textContent = cfg.badge;
     userInput.placeholder  = cfg.placeholder;
+
+    // Inspector sync
+    document.getElementById("ins-agent").textContent = agent;
   }
 
   /* ----------------------------
-     Send message
+     Form submit (SINGLE source)
   ---------------------------- */
-  sendBtn.addEventListener("click", sendMessage);
-
-  userInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+  chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await sendMessage();
   });
 
   async function sendMessage() {
@@ -120,38 +119,36 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await callBackend(text, abortController.signal);
       removeTyping(typingId);
 
-     const decision = (data.decision || "allowed").toLowerCase();
+      const decision = (data.decision || "allowed").toLowerCase();
 
-// Policy event card (always show if rewritten or blocked)
-if (decision === "blocked") {
-  addPolicyCard(
-    "Blocked by Policy",
-    data.policy || "Policy enforcement"
-  );
-}
+      if (decision === "blocked") {
+        addPolicyCard(
+          "Blocked by Policy",
+          data.reason || "Request blocked by policy"
+        );
+      }
 
-if (decision === "rewritten") {
-  addPolicyCard(
-    "Sensitive Data Sanitized",
-    (data.dlp || []).join(", ") || "Data was sanitized"
-  );
-}
+      if (decision === "rewritten") {
+        addPolicyCard(
+          "Sensitive Data Sanitized",
+          (data.dlp || []).join(", ") || "Sensitive data was sanitized"
+        );
+      }
 
-// Always show assistant message
-addMessage({
-  role: "assistant",
-  title: AGENTS[activeAgent].label,
-  text: data.message || "Done.",
-  time: nowTime(),
-});
+      addMessage({
+        role: "assistant",
+        title: AGENTS[activeAgent].label,
+        text: data.message || "Done.",
+        time: nowTime(),
+      });
 
-updateInspector(data);
+      updateInspector(data);
+
     } catch (err) {
       removeTyping(typingId);
+      console.error(err);
       addPolicyCard("Error", "Failed to reach backend");
     }
-    
-
   }
 
   /* ----------------------------
@@ -171,7 +168,36 @@ updateInspector(data);
       }),
     });
 
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
     return await res.json();
+  }
+
+  /* ----------------------------
+     Inspector
+  ---------------------------- */
+  function updateInspector(data) {
+    document.getElementById("ins-decision").textContent =
+      data.decision || "allowed";
+
+    document.getElementById("ins-stage").textContent =
+      data.stage || "—";
+
+    document.getElementById("ins-owasp").textContent =
+      (data.ai && data.ai.length) ? data.ai.join(", ") : "—";
+
+    document.getElementById("ins-action").textContent =
+      (data.dlp && data.dlp.length)
+        ? data.dlp.join(", ")
+        : "—";
+
+    document.getElementById("ins-reason").textContent =
+      data.reason || "Policy evaluated successfully.";
+
+    document.getElementById("ins-rewrite").textContent =
+      data.rewritten || "—";
   }
 
   /* ----------------------------
@@ -208,17 +234,16 @@ updateInspector(data);
   }
 
   function addPolicyCard(title, body) {
-  const row = document.createElement("div");
-  row.className = "msg-row system";
-  row.innerHTML = `
-    <div class="policy-card">
-      <div class="policy-title">${escapeHtml(title)}</div>
-      <div class="policy-body">${escapeHtml(body || "")}</div>
-    </div>`;
-  chatWindow.appendChild(row);
-  scrollToBottom();
-}
-
+    const row = document.createElement("div");
+    row.className = "msg-row system";
+    row.innerHTML = `
+      <div class="policy-card">
+        <div class="policy-title">${escapeHtml(title)}</div>
+        <div class="policy-body">${escapeHtml(body || "")}</div>
+      </div>`;
+    chatWindow.appendChild(row);
+    scrollToBottom();
+  }
 
   function addMetaMessage(text) {
     const div = document.createElement("div");
@@ -241,7 +266,10 @@ updateInspector(data);
      Utils
   ---------------------------- */
   function nowTime() {
-    return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   }
 
   function scrollToBottom() {
@@ -259,34 +287,3 @@ updateInspector(data);
   }
 
 });
-
-
-function updateInspector(data) {
-  document.getElementById("ins-agent").textContent = activeAgent;
-
-  // Decision
-  const decisionEl = document.getElementById("ins-decision");
-  decisionEl.textContent = data.decision || "allowed";
-  decisionEl.className = `status ${data.decision || "ok"}`;
-
-  // OWASP
-  document.getElementById("ins-owasp").textContent =
-    (data.ai && data.ai.length) ? data.ai.join(", ") : "—";
-
-  // Stage
-  document.getElementById("ins-stage").textContent = data.stage || "—";
-
-  // Action
-  document.getElementById("ins-action").textContent =
-    (data.dlp && data.dlp.length)
-      ? data.dlp.join(", ")
-      : (data.ai && data.ai.length ? data.ai.join(", ") : "—");
-
-  // Reason
-  document.getElementById("ins-reason").textContent =
-    data.reason || "Policy evaluated successfully.";
-
-  // Suggested Rewrite
-  document.getElementById("ins-rewrite").textContent =
-    data.rewritten || "—";
-}
