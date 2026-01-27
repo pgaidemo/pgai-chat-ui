@@ -52,7 +52,7 @@ html, body {
   flex-direction:column;
   gap:14px;
   height: calc(100vh - 48px); /* 🔥 CRITICAL */
-
+  overflow: hidden;
 }
 
 .topbar{
@@ -140,6 +140,10 @@ button{
   display:grid;
   grid-template-columns: 1.55fr .85fr;
   gap:14px;
+
+  flex: 1;        /* 🔑 fill remaining shell height */
+  min-height: 0;  /* 🔑 REQUIRED for internal scrolling */
+  overflow: hidden;
 }
 
 .card{
@@ -153,7 +157,9 @@ button{
 .chat-card{
   display:flex;
   flex-direction:column;
-  min-height: 0px;
+  
+  flex: 1;        /* 🔑 fill layout column */
+  min-height: 0;  /* 🔑 allow chat scroll */
 }
 
 .card-header{
@@ -221,7 +227,8 @@ button{
 .chat{
   flex:1;
   padding:14px 14px 6px 14px;
-  overflow:auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   background:
     radial-gradient(700px 400px at 50% -10%, rgba(37,99,235,.06), rgba(37,99,235,0) 60%),
     #fff;
@@ -416,7 +423,10 @@ button{
 .inspector-card{
   display:flex;
   flex-direction:column;
-  min-height: 640px;
+  
+  flex: 1;        /* 🔑 same height as chat */
+  min-height: 0;  /* 🔑 do NOT force page growth */
+
   background: var(--card2);
   backdrop-filter: blur(10px);
 }
