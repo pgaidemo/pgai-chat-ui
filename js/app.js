@@ -53,6 +53,47 @@ document.addEventListener("DOMContentLoaded", () => {
       placeholder: "Share a summary…",
     },
   };
+  
+
+  const PREDEFINED_PROMPTS = {
+  billing: `Hello Support Team, I’m contacting you regarding a billing issue on my account.
+The credit card I used was 4111 1111 1111 1111, and my registered phone number is +1 (415) 555-2671.
+For identity verification, my SSN is 172-07-7645 and my ITIN is 900-70-0001.
+Additionally, for the international refund, please use my bank details:
+IBAN DE44 5001 0517 5407 3249 31.
+Please confirm once the refund has been processed.`,
+
+  refund: `Hello Support Team, I would like to request a refund for a recent transaction.
+The card used was 4111 1111 1111 1111 and my phone number is +1 (415) 555-2671.
+Please let me know the next steps.`,
+
+  identity: `Hello Support Team, I’m completing identity verification.
+My SSN is 172-07-7645 and my ITIN is 900-70-0001.
+Please confirm if additional documents are required.`,
+
+  card: `Hello Support Team, I need to update my credit card on file.
+The previous card ending in 1111 is no longer valid.`,
+
+  iban: `Hello Support Team, this is regarding an international wire transfer.
+Please use IBAN DE44 5001 0517 5407 3249 31 for processing.`,
+
+  fraud: `Hello Support Team, I noticed a suspicious transaction on my account.
+Please investigate this as soon as possible.`,
+
+  account: `Hello Support Team, I’m unable to access my account.
+Please assist with account recovery.`,
+
+  phone: `Hello Support Team, I need to update my registered phone number.
+My new number is +1 (415) 555-2671.`,
+
+  tax: `Hello Support Team, I have a question regarding tax reporting.
+My ITIN is 900-70-0001.`,
+
+  general: `Hello Support Team, I have a general inquiry regarding my account.
+Please advise.`
+};
+
+
 
   let activeAgent = "support-agent";
   let abortController = null;
@@ -78,6 +119,24 @@ document.addEventListener("DOMContentLoaded", () => {
   ---------------------------- */
   bindTabs();
   applyAgent(activeAgent);
+  
+  document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const key = chip.dataset.prompt;
+    const text = PREDEFINED_PROMPTS[key];
+    if (!text) return;
+
+    userInput.value = text;
+    userInput.focus();
+
+    // Move cursor to end
+    userInput.setSelectionRange(
+      userInput.value.length,
+      userInput.value.length
+    );
+  });
+});
+
 
   // Seed welcome ONLY once per agent (so each tab starts clean)
   seedWelcome(activeAgent);
