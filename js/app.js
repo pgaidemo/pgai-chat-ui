@@ -1,6 +1,7 @@
 /* ============================
    PointGuardAI Demo Chat UI
    Production-grade (vanilla JS)
+   Per-agent chat isolation + per-agent conversation_id
    ============================ */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,8 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("❌ Critical chat DOM elements missing");
     return;
   }
-
-  const sessionId = crypto.randomUUID();
 
   /* ----------------------------
      Config
@@ -59,11 +58,30 @@ document.addEventListener("DOMContentLoaded", () => {
   let abortController = null;
 
   /* ----------------------------
+     Per-agent state (FIX)
+  ---------------------------- */
+  const agentChats = Object.fromEntries(
+    Object.keys(AGENTS).map(a => [a, []])
+  );
+
+  const agentSessions = Object.fromEntries(
+    Object.keys(AGENTS).map(a => [a, crypto.randomUUID()])
+  );
+
+  // Optional: keep last inspector payload per agent
+  const agentInspector = Object.fromEntries(
+    Object.keys(AGENTS).map(a => [a, null])
+  );
+
+  /* ----------------------------
      Init
   ---------------------------- */
   bindTabs();
   applyAgent(activeAgent);
-  seedWelcome();
+
+  // Seed welcome ONLY once per agent (so each tab starts clean)
+  seedWelcome(activeAgent);
+  renderChat(activeAgent);
 
   /* ----------------------------
      Tabs
@@ -77,9 +95,22 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
 
+        // Cancel any in-flight request from previous agent
+        if (abortController) abortController.abort();
+        abortController = null;
+
         activeAgent = agent;
         applyAgent(agent);
-        addMetaMessage(`Switched to ${AGENTS[agent].label}`);
+
+        // Render correct chat for this agent
+        renderChat(agent);
+
+        // Restore inspector for this agent (or reset)
+        if (agentInspector[agent]) {
+          updateInspector(agentInspector[agent], agent);
+        } else {
+          resetInspector(agent);
+        }
       });
     });
   }
@@ -92,7 +123,8 @@ document.addEventListener("DOMContentLoaded", () => {
     userInput.placeholder  = cfg.placeholder;
 
     // Inspector sync
-    document.getElementById("ins-agent").textContent = agent;
+    const insAgent = document.getElementById("ins-agent");
+    if (insAgent) insAgent.textContent = agent;
   }
 
   /* ----------------------------
@@ -107,62 +139,104 @@ document.addEventListener("DOMContentLoaded", () => {
     const text = userInput.value.trim();
     if (!text) return;
 
-    addMessage({ role: "user", title: "You", text, time: nowTime() });
+    // snapshot agent to avoid race conditions if user switches tabs mid-flight
+    const agentAtSend = activeAgent;
+
+    // Store user message into this agent chat
+    pushChat(agentAtSend, {
+      type: "message",
+      role: "user",
+      title: "You",
+      text,
+      time: nowTime(),
+    });
+    renderChat(agentAtSend);
+
     userInput.value = "";
 
     if (abortController) abortController.abort();
     abortController = new AbortController();
 
-    const typingId = addTyping();
+    // Add typing indicator (stored per-agent)
+    const typingToken = addTyping(agentAtSend);
+    renderChat(agentAtSend);
 
     try {
-      const data = await callBackend(text, abortController.signal);
-      removeTyping(typingId);
+      const data = await callBackend(text, abortController.signal, agentAtSend);
+
+      // Remove typing indicator
+      removeTyping(agentAtSend, typingToken);
 
       const decision = (data.decision || "allowed").toLowerCase();
 
       if (decision === "blocked") {
-        addPolicyCard(
-          "Blocked by Policy",
-          data.reason || "Request blocked by policy"
-        );
+        pushChat(agentAtSend, {
+          type: "policy",
+          title: "Blocked by Policy",
+          body: data.reason || "Request blocked by policy",
+          time: nowTime(),
+        });
       }
 
       if (decision === "rewritten") {
-        addPolicyCard(
-          "Sensitive Data Sanitized",
-          (data.dlp || []).join(", ") || "Sensitive data was sanitized"
-        );
+        pushChat(agentAtSend, {
+          type: "policy",
+          title: "Sensitive Data Sanitized",
+          body: (data.dlp || []).join(", ") || "Sensitive data was sanitized",
+          time: nowTime(),
+        });
       }
 
-      addMessage({
+      pushChat(agentAtSend, {
+        type: "message",
         role: "assistant",
-        title: AGENTS[activeAgent].label,
+        title: AGENTS[agentAtSend].label,
         text: data.message || "Done.",
         time: nowTime(),
       });
 
-      updateInspector(data);
+      // Save + update inspector per-agent
+      agentInspector[agentAtSend] = data;
+
+      // Re-render only if user is still on this agent
+      if (activeAgent === agentAtSend) {
+        renderChat(agentAtSend);
+        updateInspector(data, agentAtSend);
+      }
 
     } catch (err) {
-      removeTyping(typingId);
+      removeTyping(agentAtSend, typingToken);
+
+      // If request was aborted because tab switch / new message, don’t show error
+      if (err?.name === "AbortError") return;
+
       console.error(err);
-      addPolicyCard("Error", "Failed to reach backend");
+
+      pushChat(agentAtSend, {
+        type: "policy",
+        title: "Error",
+        body: "Failed to reach backend",
+        time: nowTime(),
+      });
+
+      if (activeAgent === agentAtSend) {
+        renderChat(agentAtSend);
+      }
     }
   }
 
   /* ----------------------------
      Network
   ---------------------------- */
-  async function callBackend(prompt, signal) {
+  async function callBackend(prompt, signal, agent) {
     const res = await fetch(POINTGUARDAI_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal,
       body: JSON.stringify({
-        agent: activeAgent,
+        agent,
         message: prompt,
-        conversation_id: sessionId,
+        conversation_id: agentSessions[agent], // ✅ per-agent conversation id
         source: "pgai-chat-ui",
         meta: { ts: new Date().toISOString() }
       }),
@@ -178,83 +252,57 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ----------------------------
      Inspector
   ---------------------------- */
-  function updateInspector(data) {
-    document.getElementById("ins-decision").textContent =
-      data.decision || "allowed";
+  function resetInspector(agent) {
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
 
-    document.getElementById("ins-stage").textContent =
-      data.stage || "—";
+    set("ins-agent", agent);
+    set("ins-decision", "—");
+    set("ins-stage", "—");
+    set("ins-owasp", "—");
+    set("ins-action", "—");
+    set("ins-reason", "Run a prompt to see decision details here.");
+    set("ins-rewrite", "—");
+  }
 
-    document.getElementById("ins-owasp").textContent =
-      (data.ai && data.ai.length) ? data.ai.join(", ") : "—";
+  function updateInspector(data, agent) {
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
 
-    document.getElementById("ins-action").textContent =
+    set("ins-agent", agent);
+
+    set("ins-decision", data.decision || "allowed");
+    set("ins-stage", data.stage || "—");
+
+    set("ins-owasp", (data.ai && data.ai.length) ? data.ai.join(", ") : "—");
+
+    set(
+      "ins-action",
       (data.dlp && data.dlp.length)
         ? data.dlp.join(", ")
-        : "—";
+        : ((data.ai && data.ai.length) ? data.ai.join(", ") : "—")
+    );
 
-    document.getElementById("ins-reason").textContent =
-      data.reason || "Policy evaluated successfully.";
-
-    document.getElementById("ins-rewrite").textContent =
-      data.rewritten || "—";
+    set("ins-reason", data.reason || "Policy evaluated successfully.");
+    set("ins-rewrite", data.rewritten || "—");
   }
 
   /* ----------------------------
-     Rendering
+     Chat state helpers
   ---------------------------- */
-  function addMessage({ role, title, text, time }) {
-    const row = document.createElement("div");
-    row.className = `msg-row ${role}`;
-    row.innerHTML = `
-      <div class="msg-bubble ${role}">
-        <div class="msg-header">
-          <span>${escapeHtml(title)}</span>
-          <span>${time}</span>
-        </div>
-        <div class="msg-body">${formatText(text)}</div>
-      </div>`;
-    chatWindow.appendChild(row);
-    scrollToBottom();
+  function pushChat(agent, item) {
+    agentChats[agent].push(item);
   }
 
-  function addTyping() {
-    const id = "typing-" + Date.now();
-    const row = document.createElement("div");
-    row.id = id;
-    row.className = "msg-row assistant";
-    row.innerHTML = `<div class="msg-bubble assistant">Typing…</div>`;
-    chatWindow.appendChild(row);
-    scrollToBottom();
-    return id;
-  }
+  function seedWelcome(agent) {
+    if (agentChats[agent].some(x => x.type === "welcome")) return;
 
-  function removeTyping(id) {
-    document.getElementById(id)?.remove();
-  }
-
-  function addPolicyCard(title, body) {
-    const row = document.createElement("div");
-    row.className = "msg-row system";
-    row.innerHTML = `
-      <div class="policy-card">
-        <div class="policy-title">${escapeHtml(title)}</div>
-        <div class="policy-body">${escapeHtml(body || "")}</div>
-      </div>`;
-    chatWindow.appendChild(row);
-    scrollToBottom();
-  }
-
-  function addMetaMessage(text) {
-    const div = document.createElement("div");
-    div.className = "meta";
-    div.textContent = text;
-    chatWindow.appendChild(div);
-    scrollToBottom();
-  }
-
-  function seedWelcome() {
-    addMessage({
+    agentChats[agent].push({
+      type: "welcome",
       role: "assistant",
       title: "PointGuardAI",
       text: "Welcome. Select an agent and start chatting.",
@@ -262,14 +310,72 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function addTyping(agent) {
+    const token = "typing-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    agentChats[agent].push({
+      type: "typing",
+      token,
+      role: "assistant",
+      title: AGENTS[agent].label,
+      time: nowTime(),
+    });
+    return token;
+  }
+
+  function removeTyping(agent, token) {
+    agentChats[agent] = agentChats[agent].filter(x => !(x.type === "typing" && x.token === token));
+  }
+
+  /* ----------------------------
+     Rendering (renders from memory)
+  ---------------------------- */
+  function renderChat(agent) {
+    chatWindow.innerHTML = "";
+
+    (agentChats[agent] || []).forEach(item => {
+      if (item.type === "policy") {
+        const row = document.createElement("div");
+        row.className = "msg-row system";
+        row.innerHTML = `
+          <div class="policy-card">
+            <div class="policy-title">${escapeHtml(item.title || "")}</div>
+            <div class="policy-body">${escapeHtml(item.body || "")}</div>
+          </div>`;
+        chatWindow.appendChild(row);
+        return;
+      }
+
+      if (item.type === "typing") {
+        const row = document.createElement("div");
+        row.className = "msg-row assistant";
+        row.innerHTML = `<div class="msg-bubble assistant">Typing…</div>`;
+        chatWindow.appendChild(row);
+        return;
+      }
+
+      // message / welcome
+      const role = item.role || "assistant";
+      const row = document.createElement("div");
+      row.className = `msg-row ${role}`;
+      row.innerHTML = `
+        <div class="msg-bubble ${role}">
+          <div class="msg-header">
+            <span>${escapeHtml(item.title || (role === "user" ? "You" : AGENTS[agent].label))}</span>
+            <span>${escapeHtml(item.time || "")}</span>
+          </div>
+          <div class="msg-body">${formatText(item.text || "")}</div>
+        </div>`;
+      chatWindow.appendChild(row);
+    });
+
+    scrollToBottom();
+  }
+
   /* ----------------------------
      Utils
   ---------------------------- */
   function nowTime() {
-    return new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+    return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
 
   function scrollToBottom() {
