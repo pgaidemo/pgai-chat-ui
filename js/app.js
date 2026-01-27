@@ -206,12 +206,17 @@ addMessage({
   }
 
   function addPolicyCard(title, body) {
-    const row = document.createElement("div");
-    row.className = "msg-row system";
-    row.innerHTML = `<div class="policy-card"><strong>${title}</strong><br>${escapeHtml(body || "")}</div>`;
-    chatWindow.appendChild(row);
-    scrollToBottom();
-  }
+  const row = document.createElement("div");
+  row.className = "msg-row system";
+  row.innerHTML = `
+    <div class="policy-card">
+      <div class="policy-title">${escapeHtml(title)}</div>
+      <div class="policy-body">${escapeHtml(body || "")}</div>
+    </div>`;
+  chatWindow.appendChild(row);
+  scrollToBottom();
+}
+
 
   function addMetaMessage(text) {
     const div = document.createElement("div");
