@@ -96,7 +96,7 @@ body{
 }
 
 
-.brand-title{ color:rgba(11, 51, 225, 0.02); font-weight:800; line-height:1.1; }
+.brand-title{ color:rgba(104, 83, 244, 0.95); font-weight:800; line-height:1.1; }
 .brand-subtitle{ color:rgba(104, 83, 244, 0.95); font-size:12px; margin-top:2px; }
 
 .topbar-right{ display:flex; gap:10px; align-items:center; }
