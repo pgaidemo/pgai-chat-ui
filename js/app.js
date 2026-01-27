@@ -145,12 +145,12 @@ addMessage({
   time: nowTime(),
 });
 
-
+updateInspector(data);
     } catch (err) {
       removeTyping(typingId);
       addPolicyCard("Error", "Failed to reach backend");
     }
-    updateInspector(data);
+    
 
   }
 
