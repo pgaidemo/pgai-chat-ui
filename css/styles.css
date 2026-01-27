@@ -31,6 +31,11 @@ body{
               linear-gradient(180deg, var(--bg0), var(--bg1));
 }
 
+html, body {
+  height: 100%;
+  overflow: hidden; /* 🔥 CRITICAL */
+}
+
 .bg{
   position:fixed; inset:0;
   background:
@@ -46,6 +51,8 @@ body{
   display:flex;
   flex-direction:column;
   gap:14px;
+  height: calc(100vh - 48px); /* 🔥 CRITICAL */
+
 }
 
 .topbar{
