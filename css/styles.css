@@ -62,27 +62,25 @@ body{
 }
 
 .brand{ display:flex; gap:12px; align-items:center; }
-/* Brand logo container (horizontal logo safe) */
+/* Brand logo container – supports transparent horizontal logos */
 .logo {
-  height: 48px;              /* controls logo size */
-  padding: 6px 10px;         /* breathing room */
-  border-radius: 12px;
-
+  height: 48px;                 /* controls visual size */
+  padding: 6px 10px;
   display: flex;
   align-items: center;
 
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);   /* subtle glass */
+  border: 1px solid rgba(255,255,255,0.18);
 }
 
-/* Actual logo image */
+/* Transparent logo image */
 .logo img {
   height: 100%;
-  width: auto;               /* 🔥 KEY: no forced width */
+  width: auto;                  /* 🔑 allows horizontal expansion */
   max-height: 48px;
   object-fit: contain;
 }
-
 /* Fallback initials (if logo fails) */
 .logo-fallback {
   height: 100%;
