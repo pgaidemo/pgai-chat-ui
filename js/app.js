@@ -209,13 +209,16 @@ Please advise.`
     const agentAtSend = activeAgent;
 
     // Store user message into this agent chat
-    pushChat(agentAtSend, {
-      type: "message",
-      role: "user",
-      title: "You",
-      text,
-      time: nowTime(),
-    });
+    const userMsgId = crypto.randomUUID();
+
+pushChat(agentAtSend, {
+  type: "message",
+  id: userMsgId,              
+  role: "user",
+  title: "You",
+  text,
+  time: nowTime(),
+});
     renderChat(agentAtSend);
 
     userInput.value = "";
@@ -228,41 +231,56 @@ Please advise.`
     renderChat(agentAtSend);
 
     try {
-      const data = await callBackend(text, abortController.signal, agentAtSend);
+      const result = await callBackend(text, abortController.signal, agentAtSend);
+
+      // New structure
+      const pg  = result[0]; // PointGuardAI
+      const llm = result[1]; // Basic LLM
 
       // Remove typing indicator
       removeTyping(agentAtSend, typingToken);
 
-      const decision = (data.decision || "allowed").toLowerCase();
+      
 
-      if (decision === "blocked") {
-        pushChat(agentAtSend, {
-          type: "policy",
-          title: "Blocked by Policy",
-          body: data.reason || "Request blocked by policy",
-          time: nowTime(),
-        });
-      }
+      // 🔁 UPDATE original user message with rewritten content
+if (pg?.message) {
+  const msg = agentChats[agentAtSend].find(
+    m => m.type === "message" && m.id === userMsgId
+  );
 
-      if (decision === "rewritten") {
-        pushChat(agentAtSend, {
-          type: "policy",
-          title: "Sensitive Data Sanitized",
-          body: (data.dlp || []).join(", ") || "Sensitive data was sanitized",
-          time: nowTime(),
-        });
-      }
+  if (msg) {
+    msg.text = pg.message;           // 🔥 overwrite original text
+    msg.rewritten = true;            // optional flag for styling
+  }
+}
 
-      pushChat(agentAtSend, {
-        type: "message",
-        role: "assistant",
-        title: AGENTS[agentAtSend].label,
-        text: data.message || "Done.",
-        time: nowTime(),
-      });
+// Show enforcement context as policy card (optional but recommended)
+if (pg?.decision && pg.decision !== "allowed") {
+  pushChat(agentAtSend, {
+    type: "policy",
+    title: pg.policy || "Policy Enforced",
+    body: [
+      ...(pg.dlp || []),
+      ...(pg.ai || [])
+    ].join(" • "),
+    time: nowTime(),
+  });
+}
+
+     if (llm?.text) {
+  pushChat(agentAtSend, {
+    type: "message",
+    role: "assistant",
+    title: AGENTS[agentAtSend].label,
+    text: llm.text,
+    time: nowTime(),
+  });
+}
+
 
       // Save + update inspector per-agent
-      agentInspector[agentAtSend] = data;
+      agentInspector[agentAtSend] = pg;
+
 
       // Re-render only if user is still on this agent
       if (activeAgent === agentAtSend) {
