@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       label: "Customer Support",
       subtitle: "Handles customer inquiries with strict PII controls",
       badge: "Support",
-      placeholder: "Ask about a specific customer…",
+      placeholder: "How can we help you today?",
     },
     "analytics-agent": {
       label: "Analytics",
