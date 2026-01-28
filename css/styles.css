@@ -254,10 +254,15 @@ button{
   background:#fff;
 }
 .msg-bubble.user{
-  background: linear-gradient(180deg, rgba(37,99,235,.96), rgba(29,78,216,.96));
-  color:#fff;
-  border-color:rgba(255,255,255,.18);
+  background: linear-gradient(
+    180deg,
+    rgba(147,197,253,.95),  /* blue-300 */
+    rgba(96,165,250,.95)    /* blue-400 */
+  );
+  color:#0f172a;           /* slate-900 for readability */
+  border-color:rgba(255,255,255,.4);
 }
+
 
 .msg-bubble.assistant{
   background:#ffffff;
