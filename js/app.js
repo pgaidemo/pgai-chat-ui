@@ -283,7 +283,7 @@ if (pg?.decision && pg.decision !== "allowed") {
       // Re-render only if user is still on this agent
       if (activeAgent === agentAtSend) {
         renderChat(agentAtSend);
-        updateInspector(data, agentAtSend);
+        updateInspector(pg, agentAtSend);
       }
 
     } catch (err) {
