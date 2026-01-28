@@ -181,11 +181,11 @@ button{
 
 .agent-head{
   display:flex;
-  justify-content:space-between;
-  align-items:left;
-  flex:1;           
+  align-items:center;   
+  gap:16px;             
   min-width:0;
 }
+
 
 .agent-avatar{
   width:44px; height:44px;
@@ -234,7 +234,7 @@ button{
   justify-content:center;
   align-items:right;
   border-bottom:1px solid rgba(15,23,42,.06);
-  height:60px;            
+  height:50px;            
   padding:0 16px;
   border-bottom:1px solid rgba(15,23,42,.06);
   flex-shrink:0;
