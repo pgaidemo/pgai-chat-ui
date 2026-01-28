@@ -175,6 +175,7 @@ button{
   align-items:center;
   overflow:hidden; 
   line-height:1;
+  justify-content:space-between;
 }
 
 
@@ -247,7 +248,7 @@ button{
   opacity:.65;
   pointer-events:none;
   max-width:420px;
-  height:48px; 
+  height:32px; 
 }
 .agent-flow-caption{
   margin-top:6px;
