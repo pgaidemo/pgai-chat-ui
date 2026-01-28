@@ -6,11 +6,12 @@
   <title>PointGuardAI Demo Console</title>
 
   <meta name="description" content="PointGuardAI demo console - multi-agent chat UI" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" href="/assets/favicon.png" type="image/png">
 
+  <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 
@@ -18,17 +19,20 @@
   <div class="bg"></div>
 
   <main class="shell">
-    <!-- Top bar -->
+
+    <!-- ───────────── TOP BAR ───────────── -->
     <header class="topbar">
       <div class="brand">
         <div class="logo">
-          <!-- Replace with your own logo image if you want -->
-          <img src="assets/pointguardai-logo.avif" alt="PointGuardAI" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='grid';" />
+          <img
+            src="assets/pointguardai-logo.avif"
+            alt="PointGuardAI"
+            onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='grid';"
+          />
           <div id="logo-fallback" class="logo-fallback" style="display:none;">PG</div>
         </div>
         <div class="brand-text">
           <div class="brand-title">Demo Agent Console</div>
-          <!-- <div class="brand-subtitle">Demo Agent Console</div> -->
         </div>
       </div>
 
@@ -41,58 +45,73 @@
       </div>
     </header>
 
-    <!-- Layout -->
+    <!-- ───────────── LAYOUT ───────────── -->
     <section class="layout">
-      <!-- Left: chat -->
+
+      <!-- ───────────── CHAT CARD ───────────── -->
       <section class="card chat-card">
-       
+
+        <!-- HEADER (FIXED HEIGHT) -->
         <div class="card-header">
+
           <div class="agent-head">
-            <div class="agent-avatar" id="agent-avatar">CS</div>
-            <div class="agent-meta">
-              <div class="agent-title">
-                <span id="agent-name">Customer Support Agent</span>
-                <span class="badge" id="agent-badge">support-agent</span>
-              </div>
-              <div class="agent-subtitle" id="agent-subtitle">
-                Handles customer inquiries with strict PII controls.
+            <!-- LEFT: Agent Info -->
+            <div class="agent-left">
+              <div class="agent-avatar" id="agent-avatar">CS</div>
+              <div class="agent-meta">
+                <div class="agent-title">
+                  <span id="agent-name">Customer Support Agent</span>
+                  <span class="badge" id="agent-badge">Support</span>
+                </div>
+                <div class="agent-subtitle" id="agent-subtitle">
+                  Handles customer inquiries with strict PII controls
+                </div>
               </div>
             </div>
+
+            <!-- RIGHT: Flow Diagram -->
+            <div class="agent-right">
+              <img
+                src="assets/cs-flow.png"
+                alt="Request flow"
+                aria-hidden="true"
+              />
+            </div>
           </div>
-        
-        <!-- Agent empty-state flow diagram -->
-           <!-- <div class="agent-empty-state" id="agent-empty-state">  -->
-           <img
-            src="assets/cs-flow.png" 
-            class="agent-empty-state"
-            alt="Customer Support request flow"
-           />
-           <!-- <div class="agent-flow-caption">
-          All prompts are inspected by PointGuardAI
-           </div> -->
-          <!-- </div> -->
+
         </div>
-        
-        <!-- Tabs -->
+
+        <!-- ───────────── AGENT TABS ───────────── -->
         <div class="tabs" role="tablist" aria-label="Agents">
-          <button class="tab active" data-agent="support-agent" role="tab" aria-selected="true">
-            Customer Support Agent
+          <button class="tab active" data-agent="customer-assist-agent" role="tab">
+            Customer Support
           </button>
-          <button class="tab" data-agent="analytics-agent" role="tab" aria-selected="false">
-            Virtual Assitant
+          <button class="tab" data-agent="customer-rep-agent" role="tab">
+            Customer Rep
           </button>
-          <button class="tab" data-agent="auto-agent" role="tab" aria-selected="false">
-            Autonomous Ops
+          <button class="tab" data-agent="care-coordinator-agent" role="tab">
+            Care Coordinator
           </button>
-          <button class="tab" data-agent="partner-agent" role="tab" aria-selected="false">
-            Partner / A2A
+          <button class="tab" data-agent="banking-agent" role="tab">
+            Banking Assistant
+          </button>
+          <button class="tab" data-agent="developer-help-agent" role="tab">
+            Developer Help
+          </button>
+          <button class="tab" data-agent="agent-to-agent" role="tab">
+            Agent ↔ Agent
           </button>
         </div>
 
-        <!-- Messages -->
-        <div class="chat" id="chat-window" aria-live="polite" aria-label="Chat messages"></div>
+        <!-- ───────────── CHAT WINDOW ───────────── -->
+        <div
+          class="chat"
+          id="chat-window"
+          aria-live="polite"
+          aria-label="Chat messages"
+        ></div>
 
-        <!-- Composer -->
+        <!-- ───────────── COMPOSER ───────────── -->
         <form id="chat-form" class="composer">
           <div class="composer-row">
             <input
@@ -102,39 +121,30 @@
               autocomplete="off"
               spellcheck="false"
             />
-            <button class="primary" id="send-btn" type="submit">Send</button>
+            <button class="primary" id="send-btn" type="submit">
+              Send
+            </button>
           </div>
 
-          <div class="composer-hints">
-          <span class="hint">Try:</span>
-
-          <button class="chip" data-prompt="billing">Billing issue</button>
-          <button class="chip" data-prompt="refund">Refund request</button>
-          <button class="chip" data-prompt="identity">Identity verification</button>
-          <button class="chip" data-prompt="prompt_injection">Prompt Injection</button>
-          <button class="chip" data-prompt="non_english_prompt_injection">Non English Prompt Injection</button>
-          <button class="chip" data-prompt="gibberish">Gibberish</button>
-          <button class="chip" data-prompt="jailbreak">Jailbreak Attempt</button>
-          <button class="chip" data-prompt="toxicity">Toxic Message</button>
-          <button class="chip" data-prompt="tax">Tax / ITIN question</button>
-          <button class="chip" data-prompt="non_english">Non English</button>
-          </div>
-
+          <!-- Chips injected dynamically by app.js -->
+          <div class="composer-hints"></div>
         </form>
 
       </section>
 
-      <!-- Right: inspector -->
+      <!-- ───────────── INSPECTOR ───────────── -->
       <aside class="card inspector-card">
         <div class="inspector-head">
           <div class="inspector-title">Policy Inspector</div>
-          <div class="inspector-subtitle">Why something was allowed, rewritten, held, or blocked.</div>
+          <div class="inspector-subtitle">
+            Why something was allowed, rewritten, held, or blocked
+          </div>
         </div>
 
         <div class="inspector-body">
           <div class="kv">
             <div class="k">Active Agent</div>
-            <div class="v" id="ins-agent">support-agent</div>
+            <div class="v" id="ins-agent">—</div>
           </div>
 
           <div class="kv">
@@ -149,11 +159,6 @@
             <div class="v" id="ins-owasp">—</div>
           </div>
 
-          <!-- <div class="kv">
-            <div class="k">PGAI Stage</div>
-            <div class="v" id="ins-stage">—</div>
-          </div> -->
-
           <div class="kv">
             <div class="k">Action</div>
             <div class="v" id="ins-action">—</div>
@@ -164,32 +169,35 @@
           <div class="block">
             <div class="block-title">Policies Triggered</div>
             <div class="block-body" id="ins-reason">
-              Run a prompt to see details here.
+              Run a prompt to see decision details here.
             </div>
           </div>
-
-          <!-- <div class="block">
-            <div class="block-title">Suggested Rewrite</div>
-            <div class="block-body mono" id="ins-rewrite">—</div>
-          </div>
-        </div> -->
+        </div>
 
         <div class="inspector-footer">
           <div class="small">
-            Real-time visibility into how PointGuardAI evaluates, rewrites, allows, or blocks requests.
+            Real-time visibility into how PointGuardAI evaluates and enforces AI security.
           </div>
         </div>
       </aside>
+
     </section>
 
+    <!-- ───────────── FOOTER ───────────── -->
     <footer class="footer">
-      <div class="footer-left">© <span class="small" id="year"></span> PointGuardAI Demo</div>
+      <div class="footer-left">
+        © <span class="small" id="year"></span> PointGuardAI Demo
+      </div>
       <div class="footer-right">
-        <span class="small">Protected by PointGuardAI • AI Security & Data Protection in Real Time</span>
+        <span class="small">
+          Protected by PointGuardAI • AI Security & Data Protection in Real Time
+        </span>
       </div>
     </footer>
+
   </main>
 
-  <script src="js/app.js"></script>
+  <!-- IMPORTANT: module required for agents.config.js -->
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
