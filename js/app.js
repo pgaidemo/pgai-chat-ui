@@ -58,8 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
   billing: `Hello Support Team, I’m contacting you regarding a billing issue on my account.
 The credit card I used was 4111 1111 1111 1111, and my registered phone number is +1 (415) 555-2671.
 For identity verification, my SSN is 172-07-7645 and my ITIN is 900-70-0001.
-Additionally, for the international refund, please use my bank details:
-IBAN DE44 5001 0517 5407 3249 31.
 Please confirm once the refund has been processed.`,
 
   refund: `Hello Support Team, I would like to request a refund for a recent transaction.
