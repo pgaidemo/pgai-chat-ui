@@ -402,7 +402,7 @@ if (pg?.decision && pg.decision !== "allowed") {
     agentChats[agent].push({
       type: "welcome",
       role: "assistant",
-      title: "Customer Support",
+      title: "Customer Support Agent",
       text: "Welcome. How can we help you today?",
       time: nowTime(),
     });
