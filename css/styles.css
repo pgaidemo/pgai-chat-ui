@@ -279,6 +279,7 @@ button{
   gap:10px;
   font-size:13px;
   margin-bottom:6px;
+  font-weight:700;
   opacity:.85;
 }
 .policy-card{
