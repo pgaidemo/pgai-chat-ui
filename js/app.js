@@ -388,7 +388,7 @@ if (pg?.decision && pg.decision !== "allowed") {
         : ((data.ai && data.ai.length) ? data.ai.join(", ") : "—")
     );
 
-    set("ins-reason", data.reason || "Policy evaluated successfully.");
+    set("ins-reason", data.policy || "Policy evaluated successfully.");
     set("ins-rewrite", data.rewritten || "—");
   }
 
