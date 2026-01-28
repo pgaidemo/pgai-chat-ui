@@ -56,12 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const PREDEFINED_PROMPTS = {
   billing: `Hello Support Team, I’m contacting you regarding a billing issue on my account.
-The credit card I used was 4145 4274 3612 7899, and my registered phone number is +1 (415) 555-2671.
+The credit card I used was AmEx 3782 822463 10005, and my registered phone number is +1 (415) 555-2671.
 For identity verification, my SSN is 172-07-7645 and my ITIN is 900-70-0001.
 Please confirm once the refund has been processed.`,
 
   refund: `Hello Support Team, I would like to request a refund for a recent transaction.
-The card used was 5312 4236 6745 7890 and my phone number is +1 (415) 555-2671.
+The credit card used was 4012 8888 8888 1881 and my phone number is +1 (415) 555-2671.
 Please let me know the next steps.`,
 
   identity: `Hello Support Team, I’m completing identity verification.
