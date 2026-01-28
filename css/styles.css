@@ -246,7 +246,7 @@ button{
   opacity:.65;
   pointer-events:none;
   max-width:420px;
-  max-height:48px;
+  max-height:100px;
 }
 .agent-flow-caption{
   margin-top:6px;
