@@ -198,6 +198,30 @@ button{
   font-size:13px;
 }
 
+.agent-empty-state{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:24px 16px 12px;
+  border-bottom:1px solid rgba(15,23,42,.06);
+}
+
+.agent-empty-state img{
+  max-width:520px;
+  width:100%;
+  opacity:.65;
+  pointer-events:none;
+}
+.agent-flow-caption{
+  margin-top:6px;
+  font-size:12px;
+  color:rgba(15,23,42,.6);
+  letter-spacing:.2px;
+  text-align:center;
+  font-weight:500;
+}
+
+
 .tabs{
   display:flex;
   gap:6px;
