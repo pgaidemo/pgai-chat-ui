@@ -321,7 +321,7 @@ if (pg?.decision && pg.decision !== "allowed") {
   document.getElementById("ins-rewrite").textContent = "—";
 
   // Seed fresh welcome message
-  seedWelcome();
+  seedWelcome(activeAgent);
 }
 
 
