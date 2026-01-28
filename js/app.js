@@ -461,7 +461,7 @@ if (pg?.decision && pg.decision !== "allowed") {
             <span>${escapeHtml(item.title || (role === "user" ? "You" : AGENTS[agent].label))}</span>
             <span>${escapeHtml(item.time || "")}</span>
           </div>
-          <div class="msg-body">${formatText(item.text || "")}</div>
+          <div class="msg-bubble">${formatText(item.text || "")}</div>
         </div>`;
       chatWindow.appendChild(row);
     });

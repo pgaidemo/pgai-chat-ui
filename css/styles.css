@@ -312,7 +312,7 @@ button{
   border:1px solid rgba(2,6,23,.10);
   box-shadow:0 6px 18px rgba(2,6,23,.06);
   line-height:1.45;
-  font-size:12px;
+  font-size:10px;
   background:#fff;
 }
 .msg-bubble.user{
@@ -339,7 +339,7 @@ button{
   display:flex;
   justify-content:space-between;
   gap:10px;
-  font-size:13px;
+  font-size:10px;
   margin-bottom:6px;
   font-weight:700;
   opacity:.85;
