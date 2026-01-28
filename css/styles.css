@@ -163,14 +163,27 @@ button{
 }
 
 .card-header{
-  padding:16px 16px 12px 16px;
+  height:72px; /* 👈 FIXED height */
+  padding:0 16px; /* 👈 move padding control to inner layout */
   border-bottom:1px solid var(--stroke);
-  background: linear-gradient(180deg, rgba(37,99,235,.06), rgba(37,99,235,0));
+  background: linear-gradient(
+    180deg,
+    rgba(37,99,235,.06),
+    rgba(37,99,235,0)
+  );
+  display:flex;
+  align-items:center;
+  overflow:hidden; /* 👈 CRITICAL: prevents growth */
 }
 
+
 .agent-head{
-  display:flex; align-items:center; gap:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
 }
+
 .agent-avatar{
   width:44px; height:44px;
   border-radius:14px;
@@ -197,6 +210,18 @@ button{
   color: var(--muted);
   font-size:13px;
 }
+.agent-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-shrink:0;
+}
+
+.agent-right img{
+  height:36px;      /* 👈 prevents header growth */
+  opacity:.6;
+  pointer-events:none;
+}
 
 .agent-empty-state{
   display:flex;
@@ -214,11 +239,12 @@ button{
 }
 .agent-flow-caption{
   margin-top:6px;
-  font-size:12px;
+  font-size:11px;
   color:rgba(15,23,42,.6);
   letter-spacing:.2px;
   text-align:center;
   font-weight:500;
+  white-space:nowrap;
 }
 
 
