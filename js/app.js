@@ -437,7 +437,7 @@ if (pg?.decision && pg.decision !== "allowed") {
        row.innerHTML = `
           <div class="policy-card">
             <div class="policy-title">
-              PointGuardAI:
+              PointGuardAI: 
               <span class="policy-body">${escapeHtml(item.body || "")}</span>
             </div>
           </div>`;
