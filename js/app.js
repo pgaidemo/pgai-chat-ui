@@ -437,7 +437,7 @@ if (pg?.decision && pg.decision !== "allowed") {
         row.innerHTML = `
           <div class="policy-card">
             <div class="policy-title">PointGuardAI: 
-            <div class="policy-body">" " || ${escapeHtml(item.body || "")}</div>
+            <div class="policy-body">${" " || escapeHtml(item.body || "")}</div>
             </div>
           </div>`;
         chatWindow.appendChild(row);
