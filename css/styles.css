@@ -211,7 +211,7 @@ button{
 .agent-subtitle{
   margin-top:4px;
   color: var(--muted);
-  font-size:13px;
+  font-size:11px;
 }
 .agent-right{
   display:flex;
@@ -232,9 +232,9 @@ button{
 .agent-empty-state{
   display:flex;
   justify-content:center;
-  align-items:center;
+  align-items:right;
   border-bottom:1px solid rgba(15,23,42,.06);
-  height:65px;            
+  height:60px;            
   padding:0 16px;
   border-bottom:1px solid rgba(15,23,42,.06);
   flex-shrink:0;
