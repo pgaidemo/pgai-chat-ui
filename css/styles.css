@@ -256,17 +256,23 @@ button{
 .msg-bubble.user{
   background: linear-gradient(
     180deg,
-    rgba(147,197,253,.95),  /* blue-300 */
-    rgba(96,165,250,.95)    /* blue-400 */
+    rgba(191,219,254,.95),  /* blue-200 */
+    rgba(147,197,253,.95)   /* blue-300 */
   );
-  color:#0f172a;           /* slate-900 for readability */
-  border-color:rgba(255,255,255,.4);
+  color:#1e293b;           /* slate-800 */
+  border-color:rgba(59,130,246,.25);
 }
-
 
 .msg-bubble.assistant{
-  background:#ffffff;
+  background: linear-gradient(
+    180deg,
+    rgba(248,250,252,.98),  /* slate-50 */
+    rgba(241,245,249,.98)   /* slate-100 */
+  );
+  color:#0f172a;
+  border-color:rgba(15,23,42,.08);
 }
+
 .msg-header{
   display:flex;
   justify-content:space-between;
