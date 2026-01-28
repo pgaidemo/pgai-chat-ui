@@ -406,7 +406,7 @@ if (pg?.decision && pg.decision !== "allowed") {
       type: "welcome",
       role: "assistant",
       title: "PointGuardAI",
-      text: "Welcome. Select an agent and start chatting.",
+      text: "Welcome. How can we help you today?",
       time: nowTime(),
     });
   }
