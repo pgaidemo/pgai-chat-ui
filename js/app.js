@@ -434,12 +434,14 @@ if (pg?.decision && pg.decision !== "allowed") {
       if (item.type === "policy") {
         const row = document.createElement("div");
         row.className = "msg-row system";
-        row.innerHTML = `
+       row.innerHTML = `
           <div class="policy-card">
-            <div class="policy-title">PointGuardAI: 
-            <div class="policy-body">${" " || escapeHtml(item.body || "")}</div>
+            <div class="policy-title">
+              PointGuardAI:
+              <span class="policy-body">${escapeHtml(item.body || "")}</span>
             </div>
           </div>`;
+
         chatWindow.appendChild(row);
         return;
       }

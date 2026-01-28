@@ -363,6 +363,7 @@ button{
 .policy-body{
   font-size:10px;
   line-height:1.4;
+  display:inline;
 }
 .msg-row.system{
   justify-content:center;
