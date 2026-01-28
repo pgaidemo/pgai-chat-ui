@@ -231,15 +231,20 @@ button{
   display:flex;
   justify-content:center;
   align-items:center;
-  padding:24px 16px 12px;
   border-bottom:1px solid rgba(15,23,42,.06);
+  height:140px;              /* 🔑 FIXED */
+  padding:0 16px;
+  border-bottom:1px solid rgba(15,23,42,.06);
+  flex-shrink:0;
 }
 
 .agent-empty-state img{
-  max-width:520px;
+  
   width:100%;
   opacity:.65;
   pointer-events:none;
+  max-width:420px;
+  max-height:100px;
 }
 .agent-flow-caption{
   margin-top:6px;
