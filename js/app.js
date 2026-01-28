@@ -1,7 +1,6 @@
 /* ============================
    PointGuardAI Demo Chat UI
-   Production-grade (vanilla JS)
-   Per-agent chat isolation + per-agent conversation_id
+   Ravi Tanguturi
    ============================ */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -13,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatForm   = document.getElementById("chat-form");
   const userInput  = document.getElementById("user-input");
   const clearChatBtn = document.getElementById("clear-chat");
-
   const agentTitle = document.getElementById("agent-name");
   const agentSub   = document.getElementById("agent-subtitle");
   const agentBadge = document.getElementById("agent-badge");
