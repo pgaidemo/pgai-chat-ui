@@ -276,7 +276,7 @@ button{
   flex:1;
   padding:10px 10px;
   border-radius:12px 12px 0 0;
-  border:1px solid transparent;
+  border:1px solid rgba(2,6,23,.10);
   background: transparent;
   cursor:pointer;
   color: var(--muted);
