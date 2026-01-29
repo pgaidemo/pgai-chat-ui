@@ -267,7 +267,7 @@ button{
 
 .tabs{
   display:flex;
-  gap:6px;
+  /* gap:6px; */
   background: rgba(2,6,23,.02);
   border-bottom:1px solid var(--stroke);
   border-top:1px solid var(--stroke);
