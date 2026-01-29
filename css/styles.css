@@ -281,7 +281,7 @@ button{
   cursor:pointer;
   color: var(--muted);
   font-weight:700;
-  font-size:13px;
+  font-size:10px;
 }
 .tab:hover{ background: rgba(2,6,23,.04); color: var(--text); }
 .tab.active{
