@@ -297,6 +297,7 @@ button{
   padding:14px 14px 6px 14px;
   overflow-y: auto;
   overflow-x: hidden;
+  padding-top: 3em;
   padding-bottom: 5.5em;
   background:
     radial-gradient(700px 400px at 50% -10%, rgba(37,99,235,.06), rgba(37,99,235,0) 60%),
