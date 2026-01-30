@@ -365,6 +365,8 @@ button{
 }
 
 .msg-header{
+  display:flex;
+  justify-content:space-between;
   padding: 1px 6px;              /* ⬅ MUCH tighter */
   margin: -4px -8px 2px -8px;    /* ⬅ reduced pull + gap */
   border-radius: 10px 10px 0 0;
