@@ -332,11 +332,7 @@ button{
 }
 
 .msg-bubble.assistant{
-  background: linear-gradient(
-    180deg,
-    rgba(248,250,252,.98),  /* slate-50 */
-    rgba(241,245,249,.98)   /* slate-100 */
-  );
+  background: linear-gradient(180deg, rgb(220 252 220 / 98%), /* slate-50 */ rgb(229 248 234 / 98%) /* slate-100 */);
   color:#0f172a;
   border-color:rgba(15,23,42,.08);
 }
