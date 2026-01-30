@@ -246,16 +246,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function seedWelcome(agent) {
-    if (agentChats[agent].some(m => m.type === "welcome")) return;
+  if (agentChats[agent].some(m => m.type === "welcome")) return;
 
-    agentChats[agent].push({
-      type: "welcome",
-      role: "assistant",
-      title: AGENTS[agent].uiName,
-      text: "Welcome. Select a prompt or start typing.",
-      time: nowTime(),
-    });
+  const cfg = AGENTS[agent];
+
+  agentChats[agent].push({
+    type: "welcome",
+    role: "assistant",
+    title: cfg.uiName,
+    text: cfg.seedMessage || "Welcome. Select a prompt or start typing.",
+    time: nowTime(),
+  });
   }
+
 
   function addTyping(agent) {
     const token = "typing-" + Math.random();
