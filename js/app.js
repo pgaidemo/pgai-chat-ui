@@ -85,8 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     buildPromptChips(cfg.prompts || {});
 
-    const insAgent = document.getElementById("ins-agent");
-    if (insAgent) insAgent.textContent = agent;
+    setInspector("ins-agent", resolveAgentUiName(agent));
+
   }
 
   /* ----------------------------
