@@ -340,6 +340,13 @@ button{
   color:#0f172a;
   border-color:rgba(15,23,42,.08);
 }
+
+.msg-bubble.user .msg-header{
+  color: rgba(30, 64, 175, 0.75); /* blue-800 muted */
+}
+.msg-bubble.assistant .msg-header{
+  color: rgba(51, 65, 85, 0.75); /* slate-700 */
+}
 /* USER → LEFT */
 .msg-row.user{
   justify-content: flex-start;
