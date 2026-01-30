@@ -318,7 +318,7 @@ button{
   box-shadow: 0 6px 18px rgba(2,6,23,.06);
   line-height: 1.45;
   font-size: 11px;
-  white-space: pre-wrap;
+  /*white-space: pre-wrap;*/
   word-break: break-word;
 }
 .msg-bubble.user{
