@@ -66,8 +66,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         activeAgent = agent;
         applyAgent(agent);
+        seedWelcome(agent); 
         renderChat(agent);
-
+        
         agentInspector[agent]
           ? updateInspector(agentInspector[agent], agent)
           : resetInspector(agent);
