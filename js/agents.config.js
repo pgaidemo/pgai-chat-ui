@@ -26,7 +26,7 @@ export const AGENTS = {
     avatar: "CA",
     flowImage: "assets/flows/customer-assist-flow.png",
     seedMessage: "Welcome. Select a prompt or describe your billing or account issue.",
-    defaultInput: "I need help with a billing issue on my account.",
+    defaultInput: "Ex: I need help with a billing issue on my account.",
     webhook: "https://n8n.tanguturi.org/webhook/customer-assist",
 
     prompts: {
