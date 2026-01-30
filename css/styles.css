@@ -365,13 +365,13 @@ button{
 }
 
 .msg-header{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  font-size:10px;
-  margin-bottom:6px;
-  font-weight:700;
-  opacity:.85;
+  padding: 1px 6px;              /* ⬅ MUCH tighter */
+  margin: -4px -8px 2px -8px;    /* ⬅ reduced pull + gap */
+  border-radius: 10px 10px 0 0;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.1;              /* ⬅ tighter line height */
+  opacity: 0.85;
 }
 .policy-card{
   width:100%;
