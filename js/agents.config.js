@@ -32,14 +32,14 @@ export const AGENTS = {
     prompts: {
       billing: {
         label: "Billing issue",
-        text: `Hello Support Team, I’m contacting you regarding a billing issue on my account.
+        text: `Hello Support Team, I am contacting you regarding a billing issue on my account.
 The credit card I used was AmEx 3782 822463 10005.
 Please confirm once the refund has been processed.`
       },
 
       identity: {
         label: "Identity verification",
-        text: `Hello Support Team, I’m completing identity verification.
+        text: `Hello Support Team, I am completing identity verification.
 My SSN is 172-07-7645.Please confirm if additional documents are required.`
       },
 
