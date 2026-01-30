@@ -311,7 +311,7 @@ button{
 .msg-row.system{ justify-content:center; }
 
 .msg-bubble{
-  max-width: min(50%, 520px);  /* 👈 KEY FIX */
+  max-width: min(58%, 520px);  /* 👈 KEY FIX */
   padding: 4px 10px 0px 10px;
   border-radius: 16px;
   border: 1px solid rgba(2,6,23,.10);
@@ -376,9 +376,9 @@ button{
   opacity: 0.85;
 }
 .policy-card{
-  width:100%;
+  width:auto;
   max-width:560px;
-  padding:5px 7px;
+  padding:5px 10px 5px 10px;
   border-radius:14px;
   background: rgba(220,38,38,.06);
   border:1px solid rgba(220,38,38,.25);
