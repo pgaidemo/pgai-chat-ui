@@ -37,7 +37,7 @@ export const AGENTS = {
 
       identity: {
         label: "Identity verification",
-        text: `Hello Support Team, I am completing identity verification. My SSN is 172-07-7645.Please confirm if additional documents are required.`
+        text: `Hello Support Team I am completing identity verification My SSN is 172-07-7645 Please confirm if additional documents are required`
       },
 
       prompt_injection: {
