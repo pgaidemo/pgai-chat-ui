@@ -278,9 +278,12 @@ document.addEventListener("DOMContentLoaded", () => {
         row.className = "msg-row system";
         row.innerHTML = `
           <div class="policy-card">
-            <div class="policy-title">PointGuardAI</div>
-            <div class="policy-body">${escapeHtml(item.body)}</div>
+            <div class="policy-row">
+              <span class="policy-title">PointGuardAI</span>
+              <span class="policy-body">${escapeHtml(item.body)}</span>
+            </div>
           </div>`;
+
         chatWindow.appendChild(row);
         return;
       }
