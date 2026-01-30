@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateInspector(data, agent) {
-    setInspector("ins-agent", agent.uiName);
+    setInspector("ins-agent", resolveAgentUiName(agentId));
     setInspector("ins-decision", data.decision || "allowed");
     setInspector("ins-stage", data.stage || "—");
     setInspector("ins-owasp", data.ai?.join(", ") || "—");
@@ -337,7 +337,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
   }
-
+  
+  function resolveAgentUiName(agentId) {
+  return AGENTS?.[agentId]?.uiName || agentId || "—";
+}
   /* ----------------------------
      Utils
   ---------------------------- */
