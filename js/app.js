@@ -87,6 +87,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInspector("ins-agent", resolveAgentUiName(agent));
 
+    const flowImg = document.getElementById("agent-flow");
+      if (flowImg) {
+        if (cfg.flowImage) {
+          flowImg.src = cfg.flowImage;
+          flowImg.style.display = "block";
+          flowImg.alt = `${cfg.uiName} flow`;
+        } else {
+          flowImg.style.display = "none";
+        }
+      }
   }
 
   /* ----------------------------
