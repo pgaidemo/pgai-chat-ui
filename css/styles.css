@@ -153,11 +153,12 @@ button{
 }
 
 .card{
-  background: var(--card);
+  background: var(--card2);
   border-radius: var(--r20);
   border:1px solid var(--stroke);
   box-shadow: var(--shadow);
   overflow:hidden;
+  backdrop-filter: blur(10px);
 }
 
 .chat-card{
