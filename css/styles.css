@@ -274,7 +274,7 @@ button{
 }
 .tab{
   flex:1;
-  padding:10px 10px;
+  padding:5px 10px;
   border-radius:12px 12px 0 0;
   border:1px solid rgba(2,6,23,.10);
   background: transparent;
@@ -484,7 +484,7 @@ button{
 }
 #user-input{
   flex:1;
-  padding:12px 12px;
+  padding:5px 12px;
   border-radius:14px;
   border:1px solid rgba(2,6,23,.12);
   outline:none;
@@ -496,7 +496,7 @@ button{
 }
 
 .primary{
-  padding:12px 14px;
+  padding:5px 14px;
   border-radius:14px;
   border:1px solid rgba(37,99,235,.22);
   background: var(--blue);
