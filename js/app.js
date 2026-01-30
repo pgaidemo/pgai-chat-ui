@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
      Inspector
   ---------------------------- */
   function resetInspector(agent) {
-    setInspector("ins-agent", agent.uiName);
+    setInspector("ins-agent", resolveAgentUiName(agent));
     setInspector("ins-decision", "—");
     setInspector("ins-stage", "—");
     setInspector("ins-owasp", "—");
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateInspector(data, agent) {
-    setInspector("ins-agent", resolveAgentUiName(agentId));
+    setInspector("ins-agent", resolveAgentUiName(agent));
     setInspector("ins-decision", data.decision || "allowed");
     setInspector("ins-stage", data.stage || "—");
     setInspector("ins-owasp", data.ai?.join(", ") || "—");
