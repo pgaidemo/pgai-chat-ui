@@ -32,7 +32,7 @@ export const AGENTS = {
     prompts: {
       billing: {
         label: "Billing issue",
-        text: `Hello Support Team I am contacting you regarding a billing issue on my account. The credit card I used was AmEx 3782 822463 10005.`
+        text: `Hello Support Team I am contacting you regarding a billing issue on my account The credit card I used was AmEx 3782 822463 10005`
       },
 
       identity: {
