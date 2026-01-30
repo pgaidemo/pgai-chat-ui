@@ -343,9 +343,11 @@ button{
 
 .msg-bubble.user .msg-header{
   color: rgba(30, 64, 175, 0.75); /* blue-800 muted */
+  background: rgba(37, 99, 235, 0.06);
 }
 .msg-bubble.assistant .msg-header{
   color: rgba(51, 65, 85, 0.75); /* slate-700 */
+  background: rgba(15, 23, 42, 0.04);
 }
 /* USER → LEFT */
 .msg-row.user{
