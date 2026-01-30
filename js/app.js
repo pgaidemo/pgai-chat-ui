@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     agentTitle.textContent = cfg.uiName;
     agentSub.textContent   = cfg.subtitle;
     agentBadge.textContent = cfg.badge;
-    userInput.placeholder  = cfg.placeholder || "Type your message…";
+    userInput.placeholder  = cfg.defaultInput || "Type your message…";
 
     buildPromptChips(cfg.prompts || {});
 
