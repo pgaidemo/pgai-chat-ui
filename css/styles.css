@@ -311,13 +311,15 @@ button{
 .msg-row.system{ justify-content:center; }
 
 .msg-bubble{
-  padding:8px 8px;
-  border-radius:16px;
-  border:1px solid rgba(2,6,23,.10);
-  box-shadow:0 6px 18px rgba(2,6,23,.06);
-  line-height:1.45;
-  font-size:10px;
-  background:#fff;
+  max-width: min(65%, 520px);  /* 👈 KEY FIX */
+  padding: 8px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(2,6,23,.10);
+  box-shadow: 0 6px 18px rgba(2,6,23,.06);
+  line-height: 1.45;
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 .msg-bubble.user{
   background: linear-gradient(
@@ -337,6 +339,20 @@ button{
   );
   color:#0f172a;
   border-color:rgba(15,23,42,.08);
+}
+/* USER → LEFT */
+.msg-row.user{
+  justify-content: flex-start;
+}
+
+/* ASSISTANT → RIGHT */
+.msg-row.assistant{
+  justify-content: flex-end;
+}
+
+/* SYSTEM / GUARD stays centered */
+.msg-row.system{
+  justify-content: center;
 }
 
 .msg-header{
