@@ -7,6 +7,17 @@ import { AGENTS } from "./agents.config.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 
+  /* Google Analytics */
+
+  function track(event, params = {}) {
+  if (typeof gtag === "function") {
+    gtag("event", event, {
+      app: "pgai-demo-chat",
+      ...params
+    });
+  }
+}
+
   /* ----------------------------
      DOM refs
   ---------------------------- */
@@ -49,6 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
   applyAgent(activeAgent);
   seedWelcome(activeAgent);
   renderChat(activeAgent);
+  /* GA - CHat Opened */
+  track("chat_opened", {
+  agent_type: activeAgent
+  });
 
   /* ----------------------------
      Tabs (Agent Switching)
@@ -65,10 +80,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (abortController) abortController.abort();
 
         activeAgent = agent;
+        track("agent_switched", {
+          from_agent: activeAgent,
+          to_agent: agent
+        });
+
         applyAgent(agent);
         seedWelcome(agent); 
         renderChat(agent);
         
+        
+
         agentInspector[agent]
           ? updateInspector(agentInspector[agent], agent)
           : resetInspector(agent);
@@ -151,6 +173,11 @@ document.addEventListener("DOMContentLoaded", () => {
       time: nowTime(),
     });
 
+    track("chat_message_sent", {
+      agent_type: agent,
+      length: text.length
+    });
+
     renderChat(agent);
     userInput.value = "";
 
@@ -176,6 +203,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Policy card
       if (pg?.decision && pg.decision !== "allowed") {
+
+        track("agent_policy_enforced", {
+          agent_type: agent,
+          decision: pg.decision,
+          stage: pg.stage || "unknown"
+        });
+
         pushChat(agent, {
           type: "policy",
           title: "PointGuardAI Enforcement",
@@ -193,7 +227,11 @@ document.addEventListener("DOMContentLoaded", () => {
           text: llm.text,
           time: nowTime(),
         });
+        track("chat_agent_response", {
+          agent_type: agent
+        });
       }
+
 
       agentInspector[agent] = pg;
 
@@ -222,6 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
   ---------------------------- */
   async function callBackend(prompt, agent, signal) {
     const cfg = AGENTS[agent];
+    track("agent_backend_call", {
+      agent_type: agent,
+      tool: "n8n_webhook"
+    });
 
     const res = await fetch(cfg.webhook, {
       method: "POST",
@@ -278,6 +320,10 @@ document.addEventListener("DOMContentLoaded", () => {
     seedWelcome(activeAgent);
     resetInspector(activeAgent);
     renderChat(activeAgent);
+    track("chat_cleared", {
+      agent_type: activeAgent
+    });
+
   }
 
   /* ----------------------------
