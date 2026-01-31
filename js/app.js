@@ -66,9 +66,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         activeAgent = agent;
         applyAgent(agent);
-        seedWelcome(agent); 
+        seedWelcome(agent);
         renderChat(agent);
-        
+
         agentInspector[agent]
           ? updateInspector(agentInspector[agent], agent)
           : resetInspector(agent);
@@ -85,23 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
     userInput.placeholder  = cfg.defaultInput || "Type your message…";
 
     buildPromptChips(cfg.prompts || {});
-
     setInspector("ins-agent", resolveAgentUiName(agent));
-
-    const flowImg = document.getElementById("agent-flow");
-      if (flowImg) {
-        if (cfg.flowImage) {
-          flowImg.src = cfg.flowImage;
-          flowImg.style.display = "block";
-          flowImg.alt = `${cfg.uiName} flow`;
-        } else {
-          flowImg.style.display = "none";
-        }
-      }
   }
 
   /* ----------------------------
-     Prompt Chips (per agent)
+     Prompt Chips
   ---------------------------- */
   function buildPromptChips(prompts) {
     chipsRow.innerHTML = `<span class="hint">Try:</span>`;
@@ -113,10 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", () => {
         userInput.value = cfg.text;
         userInput.focus();
-        userInput.setSelectionRange(
-          userInput.value.length,
-          userInput.value.length
-        );
+        userInput.setSelectionRange(userInput.value.length, userInput.value.length);
       });
       chipsRow.appendChild(btn);
     });
@@ -163,30 +148,28 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const response = await callBackend(text, agent, abortController.signal);
 
-      const pg  = response[0]; // PointGuardAI
-      const llm = response[1]; // LLM
+      const pg  = response[0];
+      const llm = response[1];
 
       removeTyping(agent, typingToken);
 
-      // Rewrite user message if PGAI altered it
+      // ✅ Rewrite handling (FIXED)
       if (pg?.message) {
-      const cfg = AGENTS[agent];
+        const cfg = AGENTS[agent];
 
-      if (cfg.rewriteAsNewMessage) {
-        // 👨‍💻 Developer agent behavior
-        pushChat(agent, {
-          type: "message",
-          role: "assistant",
-          title: "PointGuardAI",
-          text: pg.message,
-          time: nowTime(),
-        });
-      } else {
-        // 👤 Customer agent behavior (existing)
-        const msg = agentChats[agent].find(m => m.id === userMsgId);
-        if (msg) msg.text = pg.message;
+        if (cfg.rewriteAsNewMessage === true) {
+          pushChat(agent, {
+            type: "message",
+            role: "assistant",
+            title: cfg.uiName,
+            text: pg.message,
+            time: nowTime(),
+          });
+        } else {
+          const msg = agentChats[agent].find(m => m.id === userMsgId);
+          if (msg) msg.text = pg.message;
+        }
       }
-    }
 
       // Policy card
       if (pg?.decision && pg.decision !== "allowed") {
@@ -198,8 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // Assistant response
-      if (llm?.text) {
+      // ✅ Assistant response (SUPPRESSED for rewriteAsNewMessage agents)
+      if (llm?.text && !AGENTS[agent].rewriteAsNewMessage) {
         pushChat(agent, {
           type: "message",
           role: "assistant",
@@ -261,19 +244,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function seedWelcome(agent) {
-  if (agentChats[agent].some(m => m.type === "welcome")) return;
+    if (agentChats[agent].some(m => m.type === "welcome")) return;
 
-  const cfg = AGENTS[agent];
-
-  agentChats[agent].push({
-    type: "welcome",
-    role: "assistant",
-    title: cfg.uiName,
-    text: cfg.seedMessage || "Welcome. Select a prompt or start typing.",
-    time: nowTime(),
-  });
+    const cfg = AGENTS[agent];
+    agentChats[agent].push({
+      type: "welcome",
+      role: "assistant",
+      title: cfg.uiName,
+      text: cfg.seedMessage || "Welcome. Select a prompt or start typing.",
+      time: nowTime(),
+    });
   }
-
 
   function addTyping(agent) {
     const token = "typing-" + Math.random();
@@ -311,7 +292,6 @@ document.addEventListener("DOMContentLoaded", () => {
               <span class="policy-body">${escapeHtml(item.body)}</span>
             </div>
           </div>`;
-
         chatWindow.appendChild(row);
         return;
       }
@@ -365,10 +345,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
   }
-  
+
   function resolveAgentUiName(agentId) {
-  return AGENTS?.[agentId]?.uiName || agentId || "—";
-}
+    return AGENTS?.[agentId]?.uiName || agentId || "—";
+  }
+
   /* ----------------------------
      Utils
   ---------------------------- */

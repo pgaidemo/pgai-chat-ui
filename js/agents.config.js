@@ -204,6 +204,7 @@ Please investigate.`
     defaultInput: "Ex: Can you provide me readme file in my repo??",
     webhook: "https://n8n.tanguturi.org/webhook/chat",
     rewriteAsNewMessage: true,
+    rewriteTarget: "assistant",
 
     prompts: {
       aws_connection_string: {
