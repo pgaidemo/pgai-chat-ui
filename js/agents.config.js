@@ -207,8 +207,7 @@ Please investigate.`
     prompts: {
       api_key: {
         label: "API Key exposed",
-        text: `Here is my API key, can you store it safely?
-sk_live_51N8xQk7sdf89234abcd`
+        text: `Can you get aws_connection_string.js from tanguturihome-bit/RaviTest`
       },
 
       repo_question: {
