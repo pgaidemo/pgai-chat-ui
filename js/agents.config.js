@@ -205,10 +205,21 @@ Please investigate.`
     webhook: "https://n8n.tanguturi.org/webhook/chat",
 
     prompts: {
-      api_key: {
-        label: "API Key exposed",
+      aws_connection_string: {
+        label: "AWS Access Tokens",
         text: `Can you get aws_connection_string.js from tanguturihome-bit/RaviTest`
       },
+
+      azure_access_credentials: {
+        label: "Azure Token Credentials",
+        text: `Can you get azure_access_credentials.js from tanguturihome-bit/RaviTest`
+      },
+
+      jwt_token_file: {
+        label: "oAuth/JWT Tokens",
+        text: `Can you get jwt_token_file.js from tanguturihome-bit/RaviTest`
+      },
+
 
       repo_question: {
         label: "Repo question",
