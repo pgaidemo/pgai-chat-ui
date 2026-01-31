@@ -201,7 +201,7 @@ Please investigate.`
     avatar: "DE",
     flowImage: "assets/flows/developer-enablement-flow.png",
     seedMessage: "Hi 👋 I can help review code, repos, logs, and security issues.",
-    defaultInput: "Ex: Can you provide me readme file for <Account>/<Repo Name>?",
+    defaultInput: "Ex: Can you provide me readme file in my repo??",
     webhook: "https://n8n.tanguturi.org/webhook/chat",
 
     prompts: {
