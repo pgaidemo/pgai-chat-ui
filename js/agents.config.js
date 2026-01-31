@@ -203,6 +203,7 @@ Please investigate.`
     seedMessage: "Hi 👋 I can help review code, repos, logs, and security issues.",
     defaultInput: "Ex: Can you provide me readme file in my repo??",
     webhook: "https://n8n.tanguturi.org/webhook/chat",
+    rewriteAsNewMessage: true,
 
     prompts: {
       aws_connection_string: {
