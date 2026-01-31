@@ -169,24 +169,10 @@ document.addEventListener("DOMContentLoaded", () => {
       removeTyping(agent, typingToken);
 
       // Rewrite user message if PGAI altered it
-      if (pg?.message) {
-      const cfg = AGENTS[agent];
-
-      if (cfg.rewriteAsNewMessage) {
-        // 👨‍💻 Developer agent behavior
-        pushChat(agent, {
-          type: "message",
-          role: "assistant",
-          title: "PointGuardAI",
-          text: pg.message,
-          time: nowTime(),
-        });
-      } else {
-        // 👤 Customer agent behavior (existing)
+     if (pg?.message) {
         const msg = agentChats[agent].find(m => m.id === userMsgId);
         if (msg) msg.text = pg.message;
       }
-    }
 
       // Policy card
       if (pg?.decision && pg.decision !== "allowed") {
