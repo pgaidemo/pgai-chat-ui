@@ -32,10 +32,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const chipsRow     = document.querySelector(".composer-hints");
 
+  const pgaiToggle = document.getElementById("pgai-toggle-input");
+  const pgaiLabel  = document.getElementById("pgai-label");
+
   if (!chatWindow || !chatForm || !userInput) {
     console.error("❌ Missing critical chat DOM elements");
     return;
   }
+
+  function applyPgaiUi(agent) {
+  const cfg = AGENTS[agent]?.pgai;
+
+  if (!cfg) {
+    pgaiToggle.checked = false;
+    pgaiToggle.disabled = true;
+    pgaiLabel.textContent = "AI";
+    return;
+  }
+
+  pgaiToggle.disabled = false;
+  pgaiToggle.checked = pgaiState[agent];
+  pgaiLabel.textContent = cfg.label || "PointGuardAI";
+  }
+
+  pgaiToggle?.addEventListener("change", () => {
+    pgaiState[activeAgent] = pgaiToggle.checked;
+    track("pgai_toggled", {
+      agent_type: activeAgent,
+      enabled: pgaiToggle.checked
+    });
+  });
 
   /* ----------------------------
      Runtime State
@@ -46,11 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const agentChats = {};
   const agentSessions = {};
   const agentInspector = {};
+  const pgaiState = {};
 
   Object.keys(AGENTS).forEach(agent => {
     agentChats[agent] = [];
     agentSessions[agent] = crypto.randomUUID();
     agentInspector[agent] = null;
+    pgaiState[agent] = AGENTS[agent].pgai?.enabled ?? true;
   });
 
   /* ----------------------------
@@ -120,6 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
           flowImg.style.display = "none";
         }
       }
+      applyPgaiUi(agent);
+
   }
 
   /* ----------------------------
@@ -274,6 +304,11 @@ document.addEventListener("DOMContentLoaded", () => {
         message: prompt,
         conversation_id: agentSessions[agent],
         source: "pgai-demo-ui",
+
+        pgai: {
+          enabled: pgaiState[agent],
+          label: AGENTS[agent]?.pgai?.label || "AI"
+        }
       }),
     });
 
