@@ -647,7 +647,7 @@ button{
 .right-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
 }
 
 /* If you don't already have a switch, add this too */
