@@ -41,8 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function applyPgaiUi(agent) {
+  // ✅ safety guard
+  if (!pgaiToggle || !pgaiLabel) return;
+
   const cfg = AGENTS[agent]?.pgai;
 
+  // Agent does NOT support PGAI
   if (!cfg) {
     pgaiToggle.checked = false;
     pgaiToggle.disabled = true;
@@ -50,18 +54,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  // Agent supports PGAI
   pgaiToggle.disabled = false;
   pgaiToggle.checked = pgaiState[agent];
   pgaiLabel.textContent = cfg.label || "PointGuardAI";
-  }
+}
 
-  pgaiToggle?.addEventListener("change", () => {
-    pgaiState[activeAgent] = pgaiToggle.checked;
-    track("pgai_toggled", {
-      agent_type: activeAgent,
-      enabled: pgaiToggle.checked
-    });
-  });
 
   /* ----------------------------
      Runtime State
@@ -80,6 +78,35 @@ document.addEventListener("DOMContentLoaded", () => {
     agentInspector[agent] = null;
     pgaiState[agent] = AGENTS[agent].pgai?.enabled ?? true;
   });
+
+  // ✅ Wire PGAI toggle AFTER pgaiState exists
+if (pgaiToggle) {
+  pgaiToggle.addEventListener("change", () => {
+    const enabled = pgaiToggle.checked;
+
+    // update runtime state for THIS agent
+    pgaiState[activeAgent] = enabled;
+
+    // analytics
+    track("pgai_toggled", {
+      agent_type: activeAgent,
+      enabled
+    });
+
+    // optional: immediate inspector feedback (makes it feel responsive)
+    setInspector("ins-decision", enabled ? "Monitoring" : "Bypassed");
+    setInspector(
+      "ins-reason",
+      enabled
+        ? "PointGuardAI active for this agent"
+        : "PointGuardAI disabled — direct AI access"
+    );
+
+    // debug (you can remove later)
+    console.log("[PGAI]", activeAgent, enabled);
+  });
+}
+
 
   /* ----------------------------
      Init
