@@ -226,6 +226,7 @@ button{
   gap:8px;
   flex-shrink:0;
   height:50px;
+  max-width:420px;
 }
 
 .agent-right img{
