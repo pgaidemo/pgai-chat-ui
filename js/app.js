@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ----------------------------
      Config
   ---------------------------- */
-  const POINTGUARDAI_ENDPOINT = "https://n8n.tanguturi.org/webhook/chat";
+  const POINTGUARDAI_ENDPOINT = "https://tanguturi.app.n8n.cloud/webhook/chat";
 
   const AGENTS = {
     "support-agent": {
