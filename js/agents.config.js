@@ -27,7 +27,7 @@ export const AGENTS = {
     flowImage: "assets/flows/customer-assist-flow.png",
     seedMessage: "Welcome. Select a prompt or describe your billing or account issue.",
     defaultInput: "Ex: I need help with a billing issue on my account.",
-    webhook: "https://n8n.tanguturi.org/webhook/chat",
+    webhook: "https://tanguturi.app.n8n.cloud/webhook/chat",
     pgai: {
     enabled: true,
     label: "PointGuardAI"
