@@ -772,8 +772,9 @@ function verdictLine(run, side, pending){
 const NODE_LABEL = { user: null, "pg-in": "PointGuard", model: "AI model", agent: "Agent and tools", "pg-out": "PointGuard", reply: "Response" };
 function pathStrip(s, pgOn, r, pending){
   const wrap = document.createElement("div"); wrap.className = "path"; wrap.setAttribute("aria-label", "Request path");
-  const states = r ? nodeStates(s, r) : s.path.map(k => ({ cls: (k.startsWith("pg") ? (pgOn ? "pg idle" : "skip") : "idle"), cap: k.startsWith("pg") && !pgOn ? "Switched off" : "" }));
-  s.path.forEach((k, i) => {
+  const visiblePath = pgOn ? s.path : s.path.filter(k => !k.startsWith("pg"));
+  const states = r ? nodeStates(s, r) : visiblePath.map(k => ({ cls: "idle", cap: "" }));
+  visiblePath.forEach((k, i) => {
     const st = states[i];
     const icon = k.startsWith("pg") ? ICON.pg : ICON[k] || ICON.model;
     const label = k === "user" ? s.who : NODE_LABEL[k];
