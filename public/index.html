@@ -246,14 +246,6 @@ details.raw pre{font-family:var(--mono);font-size:.7rem;background:var(--soft);p
 .pillar b{color:var(--ink)}
 html.present .raw,html.present .notes-only{display:none}
 
-/* ---------- Notes ---------- */
-.notes{position:fixed;right:1.25rem;bottom:1.25rem;width:min(26rem,calc(100% - 2.5rem));background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.15rem;z-index:20;font-size:.88rem}
-.notes::before{content:"";position:absolute;left:1.15rem;right:1.15rem;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--navy)}
-.notes[hidden]{display:none}
-.notes h3{margin:.1rem 0 .4rem;font-size:.92rem;color:var(--head)}
-.notes ol{margin:.2rem 0 0;padding-left:1.1rem}
-.notes li{margin-bottom:.35rem}
-.notes .x{position:absolute;right:.6rem;top:.45rem;border:0;background:transparent;font-size:1.2rem;color:var(--note)}
 
 /* ---------- Responsive ---------- */
 @media (max-width:1150px){
@@ -330,9 +322,6 @@ html.present .raw,html.present .notes-only{display:none}
             <button class="iconbtn" id="clearBtn" title="Clear this conversation (C)" aria-label="Clear conversation">
               <svg class="i" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h12M8 6V4.5h4V6M6 6l.7 9.5h6.6L14 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <button class="iconbtn notes-only" id="notesBtn" title="Presenter notes (N)" aria-label="Presenter notes">
-              <svg class="i" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3.5h10v13H5z" stroke-linejoin="round"/><path d="M7.5 7.5h5M7.5 10.5h5M7.5 13.5h3" stroke-linecap="round"/></svg>
-            </button>
           </div>
           <button class="present-btn" id="presentBtn" aria-pressed="false" title="Presenter mode (P)">Present</button>
         </div>
@@ -367,11 +356,6 @@ html.present .raw,html.present .notes-only{display:none}
   </aside>
 </div>
 
-<aside class="notes" id="notes" hidden aria-label="Presenter notes">
-  <button class="x" id="notesClose" aria-label="Close notes">×</button>
-  <h3 id="notesTitle">Presenter notes</h3>
-  <ol id="notesList"></ol>
-</aside>
 
 <script>
 /* =====================================================================
@@ -646,8 +630,6 @@ function renderHead(){
     : "Enter sends. Shift + Enter adds a new line. Keys: P present, C clear, N notes.";
   $("#pillar").innerHTML = `<b>${esc(s.pillar)}:</b> ${esc(PILLARS[s.pillar])}`;
 
-  $("#notesTitle").textContent = `Presenter notes: ${s.name}`;
-  $("#notesList").innerHTML = (s.notes || ["No talk track for this scenario yet."]).map(n => `<li>${esc(n)}</li>`).join("");
 }
 
 /* =====================================================================
@@ -1186,8 +1168,6 @@ function toggleCls(cls, btn){
 $("#aboutBtn").onclick = () => toggleCls("about", "#aboutBtn");
 $("#detailsBtn").onclick = () => toggleCls("details", "#detailsBtn");
 $("#historyBtn").onclick = () => { state.history = !state.history; $("#historyBtn").setAttribute("aria-pressed", state.history); renderStage(); };
-$("#notesBtn").onclick = () => { $("#notes").hidden = !$("#notes").hidden; };
-$("#notesClose").onclick = () => { $("#notes").hidden = true; };
 function toggleRail(){
   if (window.matchMedia("(max-width:760px)").matches){
     const open = $("#side").classList.toggle("open");
@@ -1206,8 +1186,7 @@ document.addEventListener("keydown", e => {
   else if (k === "d") $("#detailsBtn").click();
   else if (k === "h") $("#historyBtn").click();
   else if (k === "a") $("#aboutBtn").click();
-  else if (k === "n" && !document.documentElement.classList.contains("present")) $("#notes").hidden = !$("#notes").hidden;
-  else if (k === "escape"){ if (document.documentElement.classList.contains("present")) togglePresent(); $("#notes").hidden = true; }
+  else if (k === "escape"){ if (document.documentElement.classList.contains("present")) togglePresent(); }
 });
 
 renderAll();
