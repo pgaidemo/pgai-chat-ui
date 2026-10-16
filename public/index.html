@@ -718,13 +718,7 @@ function renderItem(m, side, isLatest){
     }
     if (r.reply){
       const d = document.createElement("div"); d.className = "msg";
-      const long = r.reply.length > 420 || (r.reply.match(/\n/g) || []).length > 6;
-      d.innerHTML = `<div class="who"><span>${esc(s.name)}</span><span>${m.time}</span></div><div class="bub${long ? " clamp" : ""}">${fmt(r.reply, true)}</div>`;
-      if (long){
-        const b = document.createElement("button"); b.type = "button"; b.className = "more"; b.textContent = "Show more";
-        b.onclick = () => { const bub = d.querySelector(".bub"); const c = bub.classList.toggle("clamp"); b.textContent = c ? "Show more" : "Show less"; };
-        d.appendChild(b);
-      }
+      d.innerHTML = `<div class="who"><span>${esc(s.name)}</span><span>${m.time}</span></div><div class="bub">${fmt(r.reply, true)}</div>`;
       frag.appendChild(d);
     }
     return frag;
