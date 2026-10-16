@@ -577,7 +577,7 @@ function renderRail(){
       const s = SCENARIOS[id], b = document.createElement("button");
       b.className = "sc"; b.type = "button";
       b.setAttribute("aria-current", id === state.active ? "true" : "false");
-      b.innerHTML = `<span class="nm">${esc(s.name)}</span><span class="st ${s.status}">${STATUS_LABEL[s.status]}</span>`;
+      b.innerHTML = `<span class="nm">${esc(s.name)}</span>${s.status !== "live" ? `<span class="st ${s.status}">${STATUS_LABEL[s.status]}</span>` : ""}`;
       b.onclick = () => select(id);
       wrap.appendChild(b);
     });
