@@ -5,7 +5,7 @@ import { SCENARIOS } from "./scenarios.js";
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   "customer-assist-agent":
-    "You are a helpful customer support assistant for a technology company. Be concise, professional, and helpful. If asked about account details or sensitive information, explain you cannot access that without verification.",
+    "You are a helpful customer support assistant. Respond in exactly 2 sentences — no more. Be direct and professional.",
 };
 
 const CORS = {
