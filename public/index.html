@@ -48,11 +48,11 @@ html.norail .side,html.present .side{display:none}
 
 /* ---------- Sidebar ---------- */
 .side{position:relative;display:flex;flex-direction:column;min-height:0;background:var(--side);color:var(--side-ink);overflow:hidden}
-.side::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;
+.side::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.09;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M11 5 L12 10 L17 11 L12 12 L11 17 L10 12 L5 11 L10 10Z' fill='%23ffffff'/%3E%3C/svg%3E");
-  -webkit-mask-image:linear-gradient(180deg,#000,transparent 45%);mask-image:linear-gradient(180deg,#000,transparent 45%)}
-.brand{position:relative;display:flex;align-items:center;padding:1rem 1.1rem .85rem}
-.brand img{width:100%;height:auto;display:block;max-height:2.4rem;object-fit:contain;object-position:left center}
+  -webkit-mask-image:linear-gradient(0deg,#000 0%,#000 40%,transparent 70%);mask-image:linear-gradient(0deg,#000 0%,#000 40%,transparent 70%)}
+.brand{position:relative;display:flex;align-items:center;padding:1.4rem 1.1rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand img{width:100%;height:auto;display:block;max-height:3.2rem;object-fit:contain;object-position:left center}
 .brand b{display:block;font-weight:800;font-size:1.05rem;letter-spacing:.01em;line-height:1.1}
 .brand span{display:block;font-size:.78rem;color:var(--side-note);line-height:1.2;margin-top:.1rem}
 .rail{position:relative;flex:1;overflow:auto;padding:.4rem .7rem 1rem;scrollbar-width:thin}
