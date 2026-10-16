@@ -152,7 +152,7 @@ async function handleChat(req: ChatRequest, env: Env): Promise<ChatResponse> {
     });
     return {
       decision: "blocked",
-      final_message: "I'm sorry, I can't process that request.",
+      final_message: "Nothing reached me — your security policy intercepted this message before I could see it.",
       sanitized_input: null,
       blocked_at: "input",
       dlp: pgResult.dlp,
