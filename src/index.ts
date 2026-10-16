@@ -4,10 +4,13 @@ import { callModel } from "./model.js";
 import { SCENARIOS } from "./scenarios.js";
 import { signToken, verifyToken, getSessionCookie, makeSessionCookie } from "./auth.js";
 import { loginPage } from "./login-page.js";
+import { fetchGitHubContext } from "./github.js";
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   "customer-assist-agent":
     "You are a helpful customer support assistant. Respond in exactly 2 sentences — no more. Be direct and professional.",
+  "developer-enablement-agent":
+    "You are a GitHub assistant for the ACME Corp engineering team. You have been given real repository data to present to the developer. Present the data clearly and concisely. Do not add commentary or warnings — just present exactly what was fetched from GitHub.",
 };
 
 const CORS = {
@@ -111,6 +114,98 @@ export default {
   },
 };
 
+async function handleGitHubAgent(req: ChatRequest, env: Env): Promise<ChatResponse> {
+  const stages: Stage[] = [];
+  const systemPrompt = SYSTEM_PROMPTS["developer-enablement-agent"];
+
+  // Step 1: fetch real GitHub data
+  let githubContext: string;
+  const fetchStart = Date.now();
+  try {
+    githubContext = await fetchGitHubContext(req.message, env);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "GitHub fetch failed";
+    return {
+      decision: "error",
+      final_message: `Could not reach GitHub: ${msg}`,
+      sanitized_input: null,
+      blocked_at: null,
+      dlp: [],
+      ai: [],
+      stages: [{ name: "GitHub fetch", result: "block", detail: msg, ms: Date.now() - fetchStart }],
+    };
+  }
+  stages.push({ name: "GitHub fetch", result: "pass", detail: "Repository data retrieved", ms: Date.now() - fetchStart });
+
+  // Step 2: model formats the response (no PointGuard yet)
+  const combinedPrompt = `${req.message}\n\n---\n${githubContext}`;
+  const model = await callModel(combinedPrompt, systemPrompt, env);
+  stages.push({ name: "Model call", result: "pass", detail: model.text, ms: model.ms });
+
+  // Step 3: PointGuard OUTPUT inspection
+  if (!req.pgai?.enabled) {
+    stages.unshift({ name: "Prompt inspection", result: "skip", detail: "PointGuard inspection disabled", ms: 0 });
+    stages.push({ name: "Response inspection", result: "skip", detail: "PointGuard inspection disabled", ms: 0 });
+    return {
+      decision: "bypassed",
+      final_message: model.text,
+      sanitized_input: null,
+      blocked_at: null,
+      dlp: [],
+      ai: [],
+      stages,
+    };
+  }
+
+  stages.unshift({ name: "Prompt inspection", result: "skip", detail: "Output-only scenario — input not inspected", ms: 0 });
+
+  const pgResult = await inspect(model.text, "GitHub Assistant - AI Safety & Data Protection", env);
+
+  if (pgResult.blocked) {
+    stages.push({
+      name: "Response inspection",
+      result: "block",
+      detail: `Response blocked by policy: ${pgResult.policyName}`,
+      dlp: pgResult.dlp,
+      ai: pgResult.ai,
+      policy: pgResult.policyName,
+      ms: pgResult.ms,
+    });
+    return {
+      decision: "blocked",
+      final_message: "I found relevant data in the repository, but PointGuard intercepted the response — it contained sensitive content that your security policy does not allow to be returned.",
+      sanitized_input: null,
+      blocked_at: "output",
+      dlp: pgResult.dlp,
+      ai: pgResult.ai,
+      stages,
+    };
+  }
+
+  const resolvedPolicy = pgResult.policyName || "GitHub Assistant - AI Safety & Data Protection";
+  stages.push({
+    name: "Response inspection",
+    result: pgResult.modified ? "modify" : "pass",
+    detail: pgResult.modified
+      ? `Response rewritten by policy: ${resolvedPolicy}`
+      : `Passed policy: ${resolvedPolicy}`,
+    dlp: pgResult.dlp,
+    ai: pgResult.ai,
+    policy: resolvedPolicy,
+    ms: pgResult.ms,
+  });
+
+  return {
+    decision: pgResult.modified ? "rewritten" : "allowed",
+    final_message: pgResult.modified ? pgResult.modifiedContent : model.text,
+    sanitized_input: pgResult.modified ? pgResult.modifiedContent : null,
+    blocked_at: null,
+    dlp: pgResult.dlp,
+    ai: pgResult.ai,
+    stages,
+  };
+}
+
 async function handleChat(req: ChatRequest, env: Env): Promise<ChatResponse> {
   const scenario = SCENARIOS[req.agent];
 
@@ -126,23 +221,23 @@ async function handleChat(req: ChatRequest, env: Env): Promise<ChatResponse> {
     };
   }
 
-  // Phase 3 scenarios require MCP tokens — not yet configured
+  // Developer Help — GitHub output inspection
+  if (req.agent === "developer-enablement-agent") {
+    return handleGitHubAgent(req, env);
+  }
+
+  // Remaining Phase 3 scenarios not yet configured
   if (req.agent !== "customer-assist-agent") {
     return {
       decision: "error",
       final_message:
-        "This scenario requires MCP configuration — available in Phase 3.",
+        "This scenario requires additional configuration — coming soon.",
       sanitized_input: null,
       blocked_at: null,
       dlp: [],
       ai: [],
       stages: [
-        {
-          name: "Prompt inspection",
-          result: "skip",
-          detail: "Phase 3 not yet deployed",
-          ms: 0,
-        },
+        { name: "Prompt inspection", result: "skip", detail: "Not yet deployed", ms: 0 },
       ],
     };
   }

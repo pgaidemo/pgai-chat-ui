@@ -53,6 +53,7 @@ export interface Env {
   CONSOLE_PASSWORD: string;
   CONSOLE_USERS?: string;
   JWT_SECRET: string;
+  GITHUB_TOKEN: string;
   TURNSTILE_SECRET_KEY?: string;
   MODE?: string;
 }
