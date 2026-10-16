@@ -33,7 +33,13 @@ export default {
       const user = form.get("username")?.toString().trim() ?? "";
       const pass = form.get("password")?.toString() ?? "";
 
-      if (user !== env.CONSOLE_USER || pass !== env.CONSOLE_PASSWORD) {
+      const authed = env.CONSOLE_USERS
+        ? (JSON.parse(env.CONSOLE_USERS) as Array<{ u: string; p: string }>).some(
+            (a) => a.u === user && a.p === pass
+          )
+        : user === env.CONSOLE_USER && pass === env.CONSOLE_PASSWORD;
+
+      if (!authed) {
         return Response.redirect(new URL("/login?error=1", request.url).toString(), 303);
       }
 
