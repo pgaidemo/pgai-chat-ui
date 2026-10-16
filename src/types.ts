@@ -49,6 +49,9 @@ export interface Env {
   PGAI_API_EMAIL: string;
   PGAI_API_KEY: string;
   ANTHROPIC_API_KEY: string;
+  CONSOLE_USER: string;
+  CONSOLE_PASSWORD: string;
+  JWT_SECRET: string;
   TURNSTILE_SECRET_KEY?: string;
   MODE?: string;
 }

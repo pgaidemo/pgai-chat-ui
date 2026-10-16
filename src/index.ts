@@ -2,6 +2,8 @@ import type { Env, ChatRequest, ChatResponse, Stage } from "./types.js";
 import { inspect } from "./inspect.js";
 import { callModel } from "./model.js";
 import { SCENARIOS } from "./scenarios.js";
+import { signToken, verifyToken, getSessionCookie, makeSessionCookie } from "./auth.js";
+import { loginPage } from "./login-page.js";
 
 const SYSTEM_PROMPTS: Record<string, string> = {
   "customer-assist-agent":
@@ -18,6 +20,56 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
+    // ── Public routes (no auth) ───────────────────────────────────────────
+    if (url.pathname === "/login") {
+      const error = url.searchParams.get("error") === "1";
+      return new Response(loginPage(error), {
+        headers: { "Content-Type": "text/html;charset=UTF-8" },
+      });
+    }
+
+    if (url.pathname === "/auth" && request.method === "POST") {
+      const form = await request.formData();
+      const user = form.get("username")?.toString().trim() ?? "";
+      const pass = form.get("password")?.toString() ?? "";
+
+      if (user !== env.CONSOLE_USER || pass !== env.CONSOLE_PASSWORD) {
+        return Response.redirect(new URL("/login?error=1", request.url).toString(), 303);
+      }
+
+      const token = await signToken(env.JWT_SECRET);
+      return new Response(null, {
+        status: 303,
+        headers: {
+          Location: "/",
+          "Set-Cookie": makeSessionCookie(token),
+        },
+      });
+    }
+
+    if (url.pathname === "/logout") {
+      return new Response(null, {
+        status: 303,
+        headers: {
+          Location: "/login",
+          "Set-Cookie": makeSessionCookie("", true),
+        },
+      });
+    }
+
+    // ── Auth check ────────────────────────────────────────────────────────
+    // Static assets (JS, CSS, images, SVGs) pass through without auth
+    // so the login page can load its logo.
+    const isAsset = /\.(svg|png|jpg|jpeg|gif|ico|css|js|woff2?|ttf)$/.test(url.pathname);
+    if (!isAsset) {
+      const token = getSessionCookie(request);
+      const valid = token ? await verifyToken(token, env.JWT_SECRET) : false;
+      if (!valid) {
+        return Response.redirect(new URL("/login", request.url).toString(), 303);
+      }
+    }
+
+    // ── Protected routes ──────────────────────────────────────────────────
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: CORS });
     }
