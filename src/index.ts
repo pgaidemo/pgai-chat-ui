@@ -198,7 +198,7 @@ async function handleGitHubAgent(req: ChatRequest, env: Env): Promise<ChatRespon
   return {
     decision: pgResult.modified ? "rewritten" : "allowed",
     final_message: pgResult.modified ? pgResult.modifiedContent : githubContext,
-    sanitized_input: pgResult.modified ? pgResult.modifiedContent : null,
+    sanitized_input: null, // output-inspection: input wasn't modified, don't show in user bubble
     blocked_at: null,
     dlp: pgResult.dlp,
     ai: pgResult.ai,
