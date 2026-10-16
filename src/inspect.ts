@@ -14,13 +14,14 @@ export interface InspectResult {
   ms: number;
 }
 
-export async function inspect(text: string, env: Env): Promise<InspectResult> {
+export async function inspect(
+  text: string,
+  policyName: string,
+  env: Env
+): Promise<InspectResult> {
   const start = Date.now();
 
-  // Strip markdown fences then JSON-encode so the API receives a clean string
-  const sanitized = JSON.stringify(
-    text.replace(/```[\s\S]*?```/g, "[code block]").trim()
-  );
+  const sanitized = text.replace(/```[\s\S]*?```/g, "[code block]").trim();
 
   const res = await fetch(`${PGAI_BASE}/inspect/input?aiSec=true`, {
     method: "POST",
@@ -29,7 +30,10 @@ export async function inspect(text: string, env: Env): Promise<InspectResult> {
       "X-appsoc-api-email": env.PGAI_API_EMAIL,
       "X-appsoc-api-key": env.PGAI_API_KEY,
     },
-    body: JSON.stringify({ content: sanitized }),
+    body: JSON.stringify({
+      policyName,
+      input: [{ role: "user", content: sanitized }],
+    }),
   });
 
   const ms = Date.now() - start;

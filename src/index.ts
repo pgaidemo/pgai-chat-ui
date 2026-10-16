@@ -126,7 +126,7 @@ async function handleChat(req: ChatRequest, env: Env): Promise<ChatResponse> {
   }
 
   // Input inspection
-  const pgResult = await inspect(req.message, env);
+  const pgResult = await inspect(req.message, scenario.policyName, env);
 
   if (pgResult.blocked) {
     stages.push({
@@ -165,15 +165,17 @@ async function handleChat(req: ChatRequest, env: Env): Promise<ChatResponse> {
     ? pgResult.modifiedContent
     : req.message;
 
+  const resolvedPolicy = pgResult.policyName || scenario.policyName;
+
   stages.push({
     name: "Prompt inspection",
     result: pgResult.modified ? "modify" : "pass",
     detail: pgResult.modified
-      ? `Rewritten by policy: ${pgResult.policyName}`
-      : `Passed policy: ${pgResult.policyName}`,
+      ? `Rewritten by policy: ${resolvedPolicy}`
+      : `Passed policy: ${resolvedPolicy}`,
     dlp: pgResult.dlp,
     ai: pgResult.ai,
-    policy: pgResult.policyName,
+    policy: resolvedPolicy,
     ms: pgResult.ms,
   });
 
