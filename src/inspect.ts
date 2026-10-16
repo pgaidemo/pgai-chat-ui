@@ -17,11 +17,14 @@ export interface InspectResult {
 export async function inspect(
   text: string,
   policyName: string,
-  env: Env
+  env: Env,
+  sanitizeCode = true
 ): Promise<InspectResult> {
   const start = Date.now();
 
-  const sanitized = text.replace(/```[\s\S]*?```/g, "[code block]").trim();
+  const sanitized = sanitizeCode
+    ? text.replace(/```[\s\S]*?```/g, "[code block]").trim()
+    : text.trim();
 
   const res = await fetch(`${PGAI_BASE}/inspect/input?aiSec=true`, {
     method: "POST",

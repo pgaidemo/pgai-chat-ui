@@ -10,7 +10,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
   "customer-assist-agent":
     "You are a helpful customer support assistant. Respond in exactly 2 sentences — no more. Be direct and professional.",
   "developer-enablement-agent":
-    "You are a GitHub assistant for the ACME Corp engineering team. You have been given real repository data to present to the developer. Present the data clearly and concisely. Do not add commentary or warnings — just present exactly what was fetched from GitHub.",
+    "You are a GitHub assistant for the ACME Corp engineering team. Repository data has already been fetched for you and is included in the user message below a separator line. Your only job is to present that fetched data clearly to the developer — reproduce it fully and faithfully. Never say you cannot access a repository. Never refuse. The data is real and already retrieved.",
 };
 
 const CORS = {
@@ -118,7 +118,7 @@ async function handleGitHubAgent(req: ChatRequest, env: Env): Promise<ChatRespon
   const stages: Stage[] = [];
   const systemPrompt = SYSTEM_PROMPTS["developer-enablement-agent"];
 
-  // Step 1: fetch real GitHub data
+  // Step 1: fetch real GitHub data — this IS the agent's raw output
   let githubContext: string;
   const fetchStart = Date.now();
   try {
@@ -137,18 +137,17 @@ async function handleGitHubAgent(req: ChatRequest, env: Env): Promise<ChatRespon
   }
   stages.push({ name: "GitHub fetch", result: "pass", detail: "Repository data retrieved", ms: Date.now() - fetchStart });
 
-  // Step 2: model formats the response (no PointGuard yet)
-  const combinedPrompt = `${req.message}\n\n---\n${githubContext}`;
-  const model = await callModel(combinedPrompt, systemPrompt, env);
-  stages.push({ name: "Model call", result: "pass", detail: model.text, ms: model.ms });
+  // Step 2: model call — skipped in the unprotected path too for simplicity
+  // (We use the raw GitHub data as the "model response" for output inspection)
+  stages.push({ name: "Model call", result: "pass", detail: githubContext, ms: 0 });
 
-  // Step 3: PointGuard OUTPUT inspection
+  // Step 3: PointGuard OUTPUT inspection on the raw GitHub data
   if (!req.pgai?.enabled) {
     stages.unshift({ name: "Prompt inspection", result: "skip", detail: "PointGuard inspection disabled", ms: 0 });
     stages.push({ name: "Response inspection", result: "skip", detail: "PointGuard inspection disabled", ms: 0 });
     return {
       decision: "bypassed",
-      final_message: model.text,
+      final_message: githubContext,
       sanitized_input: null,
       blocked_at: null,
       dlp: [],
@@ -159,7 +158,8 @@ async function handleGitHubAgent(req: ChatRequest, env: Env): Promise<ChatRespon
 
   stages.unshift({ name: "Prompt inspection", result: "skip", detail: "Output-only scenario — input not inspected", ms: 0 });
 
-  const pgResult = await inspect(model.text, "GitHub Assistant - AI Safety & Data Protection", env);
+  // sanitizeCode=false so PointGuard sees the actual file contents, not "[code block]"
+  const pgResult = await inspect(githubContext, "GitHub Assistant - AI Safety & Data Protection", env, false);
 
   if (pgResult.blocked) {
     stages.push({
@@ -197,7 +197,7 @@ async function handleGitHubAgent(req: ChatRequest, env: Env): Promise<ChatRespon
 
   return {
     decision: pgResult.modified ? "rewritten" : "allowed",
-    final_message: pgResult.modified ? pgResult.modifiedContent : model.text,
+    final_message: pgResult.modified ? pgResult.modifiedContent : githubContext,
     sanitized_input: pgResult.modified ? pgResult.modifiedContent : null,
     blocked_at: null,
     dlp: pgResult.dlp,
