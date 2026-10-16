@@ -403,7 +403,7 @@ const SCENARIOS = {
     ],
   },
   "developer-enablement-agent": {
-    name: "Developer Help", status: "live", inspects: "output", unprotected: false,
+    name: "Developer Help", status: "live", inspects: "output", unprotected: true,
     who: "Developer", path: ["user", "agent", "pg-out", "reply"],
     capability: "Output DLP on an agent that reads source repositories",
     ask: "A coding agent can pull secrets, tokens and customer lists straight out of a repo into chat.",
