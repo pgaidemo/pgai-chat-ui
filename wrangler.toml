@@ -1,0 +1,9 @@
+name = "pgai-chat-ui"
+main = "src/index.ts"
+compatibility_date = "2024-10-16"
+
+[assets]
+directory = "./public"
+
+[vars]
+MODE = "sales"
