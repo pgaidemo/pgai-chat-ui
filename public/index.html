@@ -772,10 +772,11 @@ function verdictLine(run, side, pending){
 const NODE_LABEL = { user: null, "pg-in": "PointGuard", model: "AI model", agent: "Agent and tools", "pg-out": "PointGuard", reply: "Response" };
 function pathStrip(s, pgOn, r, pending){
   const wrap = document.createElement("div"); wrap.className = "path"; wrap.setAttribute("aria-label", "Request path");
-  const visiblePath = pgOn ? s.path : s.path.filter(k => !k.startsWith("pg"));
-  const states = r ? nodeStates(s, r) : visiblePath.map(k => ({ cls: "idle", cap: "" }));
-  visiblePath.forEach((k, i) => {
-    const st = states[i];
+  const allStates = r ? nodeStates(s, r) : s.path.map(k => ({ cls: k.startsWith("pg") ? (pgOn ? "pg idle" : "skip") : "idle", cap: "" }));
+  // Zip path+states before filtering so indices stay aligned
+  const entries = s.path.map((k, i) => ({ k, st: allStates[i], i }))
+    .filter(({ k }) => pgOn || !k.startsWith("pg"));
+  entries.forEach(({ k, st, i }) => {
     const icon = k.startsWith("pg") ? ICON.pg : ICON[k] || ICON.model;
     const label = k === "user" ? s.who : NODE_LABEL[k];
     const n = document.createElement("div");
@@ -806,7 +807,7 @@ function nodeStates(s, r){
     if (k === "model" || k === "agent"){
       if (r.decision === "error" && !r.reply) return { cls: "skip", cap: "No response" };
       if (r.blockedAt === "input") return r.modelAfterBlock ? { cls: "done", cap: "Still called (fix pending)" } : { cls: "skip", cap: "Never reached" };
-      if (!r.pgOn) return { cls: "exposed", cap: "Saw the original text" };
+      if (!r.pgOn) return { cls: "exposed", cap: "Saw the sensitive content" };
       if (s.inspects === "input") return { cls: "done", cap: r.decision === "rewritten" ? "Saw redacted text only" : "Answered" };
       return { cls: "done", cap: k === "agent" ? "Ran with its tools" : "Answered" };
     }
